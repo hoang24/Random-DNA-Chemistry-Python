@@ -1,2 +1,3 @@
-# Random-DNA-Chemistry-Python
-This is a repo for Random DNA Chemistry written in Python
+# Random DNA Chemistry (Python version)
+
+Random DNA strand displacement circuits with Gillespie algorithm implementation, written in Python
