@@ -1,97 +1,50 @@
-'''
-    Script to simulate (create and run) the random DNA strand displacement circuit
-'''
-
+import matplotlib.pyplot as plt
 from random_dna_chem import RandomDNAStrandDisplacementCircuit
+from construct_chem import RandomDNAChemConstructionGillespy2
 from params import input_params, time_params
+import sys, getopt
 
 
-class RandomDNAChemDisplay(RandomDNAStrandDisplacementCircuit):
+def main(argv):
+    try:
+        opts, args = getopt.getopt(argv,"h:t:",["trajectories="])
+    except getopt.GetoptError:
+        print('Incorrect syntax. Usage: test.py -t <number_of_trajectories>')
+        sys.exit(2)
 
-    def __init__(self):
-        super().__init__(input_params=input_params, time_params=time_params)
-        print('\n')
+    if len(argv) <= 1:
+        print('Incorrect syntax. Usage: test.py -t <number_of_trajectories>')
+        sys.exit(2)
 
-    def display_species(self):
-        print('Number of species: {}'.format(self.species_lookup['nS']))
-        print('Species set: {}'.format(self.species_lookup['S']))
-        print('\n')
-        
-    def display_reactions(self):
-        print('Number of reactions: {}'.format(self.reaction_lookup['nR']))
-        print('Reaction set: {}'.format(self.reaction_lookup['R']))
-        print('\n')
+    for opt, arg in opts:
+        if opt in ('-h', '--help'):
+            print('Usage: test.py -t <number_of_trajectories>')
+            sys.exit()
+        elif opt in ('-t', '--trajectories'):
+            num_trajectories = int(arg)
 
-    def display_species_concentration(self):
-        print('Upper single strands and concentrations: ')
-        for u, conu in self.concentration_lookup['conU'].items():
-            print('{}    {}'.format(u, conu))
-        print('\n')
+    randomDNAChem = RandomDNAStrandDisplacementCircuit(input_params=input_params, 
+                                                       time_params=time_params)
 
-        print('Lower single strands and concentrations: ')
-        for l, conl in self.concentration_lookup['conL'].items():
-            print('{}    {}'.format(l, conl))
-        print('\n')
+    gillespy2_model = RandomDNAChemConstructionGillespy2(non_gillespy2_chem=randomDNAChem)
 
-        print('Full double strands and concentrations: ')
-        for f, conf in self.concentration_lookup['conF'].items():
-            print('{}    {}'.format(f, conf))
-        print('\n')
+    gillespy2_results = gillespy2_model.run(number_of_trajectories=num_trajectories)
+    
+    for index in range(num_trajectories):
+        trajectory = gillespy2_results[index]
+        plotcolor = 0x000000
+        color_array = ['#000000', '#0000FF', '#00FF00', '#00FFFF', '#000080', 
+                       '#008000', '#008080', '#800000', '#800080', '#808000', 
+                       '#808080', '#C0C0C0', '#FF0000', '#FF00FF', '#FFFF00',
+                       '#8B0000', '#006400', '#BDB76B', '#008B8B', '#191970']
+        for species_index, species in enumerate(randomDNAChem.species_lookup['S']):
+            species_plot = plt.plot(trajectory['time'], 
+                           trajectory['{}'.format(species)], 
+                           color=color_array[species_index])
 
-        print('Partial double strands and concentrations: ')
-        for p, conp in self.concentration_lookup['conP'].items():
-            print('{}    {}'.format(p, conp))
-        print('\n')
-
-    def display_order(self):
-        print('Order lookup dictionary (higher number higher order): ')
-        print(self.order_lookup)
-        print('\n')
-
-    def display_reactions_rates(self):
-        print('Displacement reactions and rates:')
-        for r_displace, rate_displace in self.rateConst_lookup['rate_DISPLACE'].items():
-            print('{}    {}'.format(r_displace, rate_displace))
-        print('\n')
-
-        print('Binding reactions and rates:')
-        for r_bind, rate_bind in self.rateConst_lookup['rate_BIND'].items():
-            print('{}    {}'.format(r_bind, rate_bind))
-        print('\n')
-
-        print('Influx reactions and rates:')
-        for r_in, rate_in in self.rateConst_lookup['rate_IN'].items():
-            print('{}    {}'.format(r_in, rate_in))
-        print('\n')
-
-        print('Efflux reactions and rates:')
-        for r_out, rate_out in self.rateConst_lookup['rate_OUT'].items():
-            print('{}    {}'.format(r_out, rate_out))
-        print('\n')
-
-    def display_inputs(self):
-        print('Input parameters: ')
-        for iparam, iparam_value in self.input_params.items():
-            if isinstance(iparam_value, dict):
-                print('{}: '.format(iparam))
-                for key, value in iparam_value.items():
-                    print('  * {} = {}'.format(key, value))
-            else:
-                print('{} = {}'.format(iparam, iparam_value))
-        print('\n')
-
-    def display_times(self):
-        print('Time parameters: ')
-        for tparam, tparam_value in self.time_params.items():
-            print('{} = {}'.format(tparam, tparam_value))
-        print('\n')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Number of molecules')
+    plt.show()
 
 if __name__ == '__main__':
-    randomDNAChem = RandomDNAChemDisplay()
-    randomDNAChem.display_species()
-    randomDNAChem.display_reactions()
-    randomDNAChem.display_species_concentration()
-    randomDNAChem.display_order()
-    randomDNAChem.display_reactions_rates()
-    randomDNAChem.display_inputs()
-    randomDNAChem.display_times()
+    main(sys.argv[1:])

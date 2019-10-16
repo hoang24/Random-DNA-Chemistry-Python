@@ -406,10 +406,15 @@ class RandomDNAStrandDisplacementCircuit(object):
                 ic_P (tuple): initial concentration for all partial double strands
         '''
 
-        ic_U = tuple(np.random.randint(0, 1000, self.species_lookup['nU']))
-        ic_L = tuple(np.random.randint(0, 1000, self.species_lookup['nL']))
-        ic_F = tuple(np.random.randint(0, 1000, self.species_lookup['nF']))
-        ic_P = tuple(np.random.randint(0, 1000, self.species_lookup['nP']))
+        ic_U = np.random.randint(0, 1000, self.species_lookup['nU'])
+        ic_L = np.random.randint(0, 1000, self.species_lookup['nL'])
+        ic_F = np.random.randint(0, 1000, self.species_lookup['nF'])
+        ic_P = np.random.randint(0, 1000, self.species_lookup['nP'])
+
+        ic_U = tuple(int(icu) for icu in ic_U)
+        ic_L = tuple(int(icl) for icl in ic_L)
+        ic_F = tuple(int(icf) for icf in ic_F)
+        ic_P = tuple(int(icp) for icp in ic_P)
 
         return ic_U, ic_L, ic_F, ic_P
 
