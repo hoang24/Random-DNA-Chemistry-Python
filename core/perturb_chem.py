@@ -6,18 +6,21 @@ from params import input_params, time_params
 from collections import OrderedDict
 
 
-class RandomDNAChemConstructionGillespy2(gillespy2.Model):
+class RandomDNAChemPerturbationGillespy2(gillespy2.Model):
     '''
         Class to construct the random DNA strand displacement circuit using gillespy2
     '''
 
-    def __init__(self, non_gillespy2_chem):
+    def __init__(self, non_gillespy2_chem, rate_in_timeIndex, period_start, period_end):
         '''
             Init method to call the parent class (gillespy2.Model) and the class methods
         '''
 
         super().__init__(self)
         self.randomDNAChem = non_gillespy2_chem
+        self.rate_in_timeIndex = rate_in_timeIndex
+        self.period_start = period_start
+        self.period_end = period_end
         self.convert_rates()
         self.convert_species()
         self.convert_reactions()
@@ -42,7 +45,7 @@ class RandomDNAChemConstructionGillespy2(gillespy2.Model):
 
         for index_in, (r_in, rate_in) in enumerate(self.randomDNAChem.rateConst_lookup['rate_IN'].items()):
             name_in = 'influx{}'.format(index_in)
-            gillespy2_kin = gillespy2.Parameter(name=name_in, expression=rate_in[0])
+            gillespy2_kin = gillespy2.Parameter(name=name_in, expression=rate_in[self.rate_in_timeIndex])
             gillespy2_rates.append(gillespy2_kin)
 
         for index_out, (r_out, rate_out) in enumerate(self.randomDNAChem.rateConst_lookup['rate_OUT'].items()):
@@ -161,20 +164,22 @@ class RandomDNAChemConstructionGillespy2(gillespy2.Model):
         '''
             Method to set the simulation timing of the gillespy2 Random DNA Chemistry
         '''
-        self.timespan(numpy.linspace(start=self.randomDNAChem.time_params['t_start'], 
-                                     stop=self.randomDNAChem.time_params['t_end'], 
+        self.timespan(numpy.linspace(start=self.period_start, 
+                                     stop=self.period_end, 
                                      num=1001))
 
 if __name__ == '__main__':
     randomDNAChem = RandomDNAStrandDisplacementCircuit(input_params=input_params, 
                                                        time_params=time_params)
 
-    gillespy2_model = RandomDNAChemConstructionGillespy2(non_gillespy2_chem=randomDNAChem)
-
-    num_trajectories = 2
-    # plot_name = 
-
-    gillespy2_results = gillespy2_model.run(number_of_trajectories=num_trajectories)
+    for time_index in range(len(randomDNAChem.time_params['time_array']) - 1):
+        rate_in_timeIndex = time_index
+        gillespy2_model = RandomDNAChemConstructionGillespy2(non_gillespy2_chem=randomDNAChem,
+                                                             rate_in_timeIndex=rate_in_timeIndex,
+                                                             period_start=randomDNAChem.time_params['time_array'][time_index],
+                                                             period_end=randomDNAChem.time_params['time_array'][time_index + 1])
+        num_trajectories = 2
+        gillespy2_results = gillespy2_model.run(number_of_trajectories=num_trajectories)
 
     color_array = ['#000000', '#0000FF', '#00FF00', '#00FFFF', '#000080', 
                    '#008000', '#008080', '#800000', '#800080', '#808000', 
@@ -197,6 +202,7 @@ if __name__ == '__main__':
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = OrderedDict(zip(labels, handles))
     plt.legend(by_label.values(), by_label.keys(), loc='best')
+    # plot_name = 
     try:
         plot_name
     except NameError:
