@@ -174,7 +174,7 @@ if __name__ == '__main__':
 
     for time_index in range(len(randomDNAChem.time_params['time_array']) - 1):
         rate_in_timeIndex = time_index
-        gillespy2_model = RandomDNAChemConstructionGillespy2(non_gillespy2_chem=randomDNAChem,
+        gillespy2_model = RandomDNAChemPerturbationGillespy2(non_gillespy2_chem=randomDNAChem,
                                                              rate_in_timeIndex=rate_in_timeIndex,
                                                              period_start=randomDNAChem.time_params['time_array'][time_index],
                                                              period_end=randomDNAChem.time_params['time_array'][time_index + 1])
