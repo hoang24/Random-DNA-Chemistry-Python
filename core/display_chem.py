@@ -8,20 +8,36 @@ class RandomDNAChemDisplay(RandomDNAStrandDisplacementCircuit):
     '''
 
     def __init__(self):
+        '''
+            Init method to run the parent class (RandomDNAStrandDisplacementCircuit)
+        '''
+
         super().__init__(input_params=input_params, time_params=time_params)
         print('\n')
 
     def display_species(self):
+        '''
+            Show the list of species in the Random DNA Chemistry and the total number of species.
+        '''
+
         print('Number of species: {}'.format(self.species_lookup['nS']))
         print('Species set: {}'.format(self.species_lookup['S']))
         print('\n')
         
     def display_reactions(self):
+        '''
+            Show the list of reactions in the Random DNA Chemistry and the total number of reactions.
+        '''
+
         print('Number of reactions: {}'.format(self.reaction_lookup['nR']))
         print('Reaction set: {}'.format(self.reaction_lookup['R']))
         print('\n')
 
     def display_species_concentration(self):
+        '''
+            Show the list of species and their initial concentration in the Random DNA Chemistry.
+        '''
+
         print('Upper single strands and concentrations: ')
         for u, conu in self.concentration_lookup['conU'].items():
             print('{}    {}'.format(u, conu))
@@ -43,11 +59,19 @@ class RandomDNAChemDisplay(RandomDNAStrandDisplacementCircuit):
         print('\n')
 
     def display_order(self):
+        '''
+            Show the order of the partial double strands in the Random DNA Chemistry.
+        '''
+
         print('Order lookup dictionary (higher number higher order): ')
         print(self.order_lookup)
         print('\n')
 
     def display_reactions_rates(self):
+        '''
+            Show the list of reactions and their rate constants in the Random DNA Chemistry.
+        '''
+
         print('Binding reactions and rates:')
         for r_bind, rate_bind in self.rateConst_lookup['rate_BIND'].items():
             print('{}    {}'.format(r_bind, rate_bind))
@@ -69,6 +93,10 @@ class RandomDNAChemDisplay(RandomDNAStrandDisplacementCircuit):
         print('\n')
 
     def display_inputs(self):
+        '''
+            Show the user defined and calculated input parameters for the Random DNA Chemistry.
+        '''
+
         print('Input parameters: ')
         for iparam, iparam_value in self.input_params.items():
             if isinstance(iparam_value, dict):
@@ -80,10 +108,26 @@ class RandomDNAChemDisplay(RandomDNAStrandDisplacementCircuit):
         print('\n')
 
     def display_times(self):
+        '''
+            Show the user defined and calculated timing parameters for the Random DNA Chemistry.
+        '''
+
         print('Time parameters: ')
         for tparam, tparam_value in self.time_params.items():
             print('{} = {}'.format(tparam, tparam_value))
         print('\n')
+
+    def display_perturbation(self):
+        '''
+            Show the perturbation times and influx rates
+        '''
+
+        print('Perturbation: ')
+        for time, event in self.perturbation_lookup.items():
+            print('Time: {}'.format(time))
+            for num_in in range(self.species_lookup['nI']):
+                print('Event_{}: {}'.format(num_in, list(event.items())[num_in]))
+            print('\n')
 
 if __name__ == '__main__':
     randomDNAChem = RandomDNAChemDisplay()
@@ -94,3 +138,4 @@ if __name__ == '__main__':
     randomDNAChem.display_reactions_rates()
     randomDNAChem.display_inputs()
     randomDNAChem.display_times()
+    randomDNAChem.display_perturbation()

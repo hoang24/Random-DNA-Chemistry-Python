@@ -7,19 +7,28 @@ from collections import OrderedDict
 
 
 def main(argv):
+    '''
+        Create the random DNA chemistry by calling the RandomDNAStrandDisplacementCircuit class.
+        Construc the gillespy2 random DNA chemistry by calling the RandomDNAChemConstructionGillespy2 class.
+        Plot the species population vs. time.
+        Call this method from Random-DNA-Chemistry-Python/
+            python core/simulate_chem.py -h (display help message)
+            python core/simulate_chem.py -t <number_of_trajectories> (set the number of trajectories and show the plot)
+            python core/simulate_chem.py -t <number_of_trajectories> -p <plot_name> (set the number of trajectories and save the plot)
+    '''
     try:
         opts, args = getopt.getopt(argv,"hp:t:",["trajectories="])
     except getopt.GetoptError:
-        print('Incorrect syntax. Usage: test.py -t <number_of_trajectories> -p <plot_name>')
+        print('Incorrect syntax. Usage: python core/simulate_chem.py -t <number_of_trajectories> -p <plot_name>')
         sys.exit(2)
 
     if len(argv) <= 1:
-        print('Incorrect syntax. Usage: test.py -t <number_of_trajectories> -p <plot_name>')
+        print('Incorrect syntax. Usage: python core/simulate_chem.py -t <number_of_trajectories> -p <plot_name>')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', '--help'):
-            print('Usage: test.py -t <number_of_trajectories> -p <plot_name>')
+            print('Usage: python core/simulate_chem.py -t <number_of_trajectories> -p <plot_name>')
             sys.exit()
         elif opt in ('-t', '--trajectories'):
             num_trajectories = int(arg)

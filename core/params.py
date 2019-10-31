@@ -1,3 +1,7 @@
+'''
+    User defined parameters for random DNA strand displacement circuit.
+'''
+
 input_params = {
     'V': 1e-6, # Volume of the chamber containing the chemistry
     'n': 7, # Number of single strands [5, 10)
@@ -10,7 +14,7 @@ input_params = {
         'variance': 0.01 # [0, 0.02) % CHANGE?
     },
     'theta_in': { # normal distribution of influx rate constants
-        'mean': 0.0003, # Sm_base [0, 0.0006) % CHANGE?
+        'mean': 300, # Sm_base [0, 0.0006) % CHANGE?
         'variance': 0.01
     },
     'theta_out': { # normal distribution of efflux rate constants

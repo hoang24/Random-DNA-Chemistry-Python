@@ -42,6 +42,8 @@ class RandomDNAStrandDisplacementCircuit(object):
         self.concentration_lookup = self.create_concentration_lookup()
         self.rateConst_lookup = self.create_rateConst_lookup()
         self.update_time_params()
+        self.update_influx_rate()
+        self.perturbation_lookup = self.perturbation_lookup()
 
     def _create_species_single(self):
         '''
@@ -573,7 +575,6 @@ class RandomDNAStrandDisplacementCircuit(object):
     def update_time_params(self):
         '''
             Method to calculate the time-related variables and update the time_params dictionary
-
         '''
 
         t_end = self.time_params['t_end']
@@ -581,61 +582,38 @@ class RandomDNAStrandDisplacementCircuit(object):
         t_hold = self.time_params['t_hold']
         num_perturb = int(np.ceil((t_end - t_perturb) / t_hold))
         self.time_params.update({'num_perturb': num_perturb})
+        time_array = list(np.arange(start = self.time_params['t_start'] + self.time_params['t_perturb'],
+                                    stop  = self.time_params['t_end'],
+                                    step  = self.time_params['t_hold']))
+        time_array = tuple([0] + time_array)
+        if len(time_array) != self.time_params['num_perturb'] + 1:
+            raise BaseException
+        self.time_params.update({'time_array': time_array})
 
-    def run_chem(self):
+    def update_influx_rate(self):
         '''
-            Method to run the random DNA strand displacement circuit chemistry
-            Args:
-                
-            Returns:
-                
-        '''
-
-        t = self.time_params['t_start']
-        iteration = 0
-        while t < self.time_params['t_end']:
-            pass
-
-    def Gillespie_initialization(self):
-        '''
-            Method for Gillespie algorithm's initialization step
-            Args:
-                
-            Returns:
-                
+            Method to generate the influx rate at each perturbation
         '''
 
-        pass
+        for influx_reaction, influx_rates in self.rateConst_lookup['rate_IN'].items():
+            base_IN = influx_rates[0]
+            for perturb_index in range(self.time_params['num_perturb']):
+                base_IN *= np.random.rand()
+                self.rateConst_lookup['rate_IN'][influx_reaction].append(base_IN)
 
-    def Gilespie_monte_carlo(self):
-        '''
-            Method for Gillespie algorithm's Monte Carlo step
-            Args:
-                
-            Returns:
-                
-        '''
+        for influx_reaction, __ in self.rateConst_lookup['rate_IN'].items():
+            if len(self.rateConst_lookup['rate_IN'][influx_reaction]) != self.time_params['num_perturb'] + 1:
+                raise BaseException
 
-        pass
-
-    def Gillespie_update(self):
+    def perturbation_lookup(self):
         '''
-            Method for Gillespie algorithm's update step
-            Args:
-                
-            Returns:
-                
+            Method to create a dictionary showing time and influx rate at each perturbation event
         '''
 
-        pass
+        perturbation_lookup = {}
+        for time_index, time in enumerate(self.time_params['time_array']):
+            perturbation_lookup.update({time: {}})
+            for r_in, rate_ins in self.rateConst_lookup['rate_IN'].items():
+                perturbation_lookup[time].update({r_in: rate_ins[time_index]})
 
-    def Gillespie_iterate(self):
-        '''
-            Method for Gillespie algorithm's iterate step
-            Args:
-                
-            Returns:
-                
-        '''
-
-        pass
+        return perturbation_lookup
