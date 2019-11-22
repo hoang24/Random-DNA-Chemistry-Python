@@ -597,8 +597,9 @@ class RandomDNAStrandDisplacementCircuit(object):
 
         for influx_reaction, influx_rates in self.rateConst_lookup['rate_IN'].items():
             base_IN = influx_rates[0]
+            # print(base_IN)
             for perturb_index in range(self.time_params['num_perturb']):
-                base_IN *= np.random.rand()
+                base_IN *= (1 + np.random.rand() - 0.5)
                 self.rateConst_lookup['rate_IN'][influx_reaction].append(base_IN)
 
         for influx_reaction, __ in self.rateConst_lookup['rate_IN'].items():
