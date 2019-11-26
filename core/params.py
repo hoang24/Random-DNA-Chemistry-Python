@@ -11,11 +11,11 @@ input_params = {
     'a_out': 0.1, # ratio of outfluces to the overall number of strands [0, 1)
     'theta': { # (positive) normal distribution of rate constants
         'mean': 0.075, # [0.05, 0.2) % CHANGE?
-        'variance': 0.01 # [0, 0.02) % CHANGE?
+        'variance': 0.0000001 # [0, 0.02) % CHANGE?
     },
     'theta_in': { # normal distribution of influx rate constants
-        'mean': 300, # Sm_base [0, 0.0006) % CHANGE?
-        'variance': 0.01
+        'mean': 0.0006, # Sm_base [0, 0.0006) % CHANGE?
+        'variance': 0.0000001
     },
     'theta_out': { # normal distribution of efflux rate constants
         'mean': 0.0003, # [0, 0.0006) % CHANGE?
