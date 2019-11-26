@@ -14,9 +14,10 @@ class RandomDNAChemPerturbationGillespy2(gillespy2.Model):
             rate_in_timeIndex (int): index of time i.e. (0: 0sec), (1: 0.01sec), (2: 0.21sec), (3:0.41sec), (4:0.61sec), (5:0.81sec)
             period_start (float): start of an simulation period i.e. 0
             period_end (float): end of an simulation period i.e. 0.01
+            previous_gillespy2_result (obj): gillespy2 result after run from the previous period
     '''
 
-    def __init__(self, non_gillespy2_chem, rate_in_timeIndex, period_start, period_end):
+    def __init__(self, non_gillespy2_chem, rate_in_timeIndex, period_start, period_end, previous_gillespy2_result):
         '''
             Init method to call the parent class (gillespy2.Model) and the class methods
             Args:
@@ -24,6 +25,7 @@ class RandomDNAChemPerturbationGillespy2(gillespy2.Model):
                 rate_in_timeIndex (int): index of time i.e. (0: 0sec), (1: 0.01sec), (2: 0.21sec), (3:0.41sec), (4:0.61sec), (5:0.81sec)
                 period_start (float): start of an simulation period i.e. 0
                 period_end (float): end of an simulation period i.e. 0.01
+                previous_gillespy2_result (obj): gillespy2 result after run from the previous period
         '''
 
         super().__init__(self)
@@ -31,6 +33,7 @@ class RandomDNAChemPerturbationGillespy2(gillespy2.Model):
         self.rate_in_timeIndex = rate_in_timeIndex
         self.period_start = period_start
         self.period_end = period_end
+        self.previous_gillespy2_result = previous_gillespy2_result
         self.convert_rates()
         self.convert_species()
         self.convert_reactions()
@@ -71,21 +74,38 @@ class RandomDNAChemPerturbationGillespy2(gillespy2.Model):
         '''
         gillespy2_species = []
 
-        for u, ucon in self.randomDNAChem.concentration_lookup['conU'].items():
-            gillespy2_u = gillespy2.Species(name=u, initial_value=ucon[0])
-            gillespy2_species.append(gillespy2_u)
+        if self.previous_gillespy2_result == None:
+            for u, ucon in self.randomDNAChem.concentration_lookup['conU'].items():
+                gillespy2_u = gillespy2.Species(name=u, initial_value=ucon[0])
+                gillespy2_species.append(gillespy2_u)
 
-        for l, lcon in self.randomDNAChem.concentration_lookup['conL'].items():
-            gillespy2_l = gillespy2.Species(name=l, initial_value=lcon[0])
-            gillespy2_species.append(gillespy2_l)
+            for l, lcon in self.randomDNAChem.concentration_lookup['conL'].items():
+                gillespy2_l = gillespy2.Species(name=l, initial_value=lcon[0])
+                gillespy2_species.append(gillespy2_l)
 
-        for f, fcon in self.randomDNAChem.concentration_lookup['conF'].items():
-            gillespy2_f = gillespy2.Species(name=f, initial_value=fcon[0])
-            gillespy2_species.append(gillespy2_f)
+            for f, fcon in self.randomDNAChem.concentration_lookup['conF'].items():
+                gillespy2_f = gillespy2.Species(name=f, initial_value=fcon[0])
+                gillespy2_species.append(gillespy2_f)
 
-        for p, pcon in self.randomDNAChem.concentration_lookup['conP'].items():
-            gillespy2_p = gillespy2.Species(name=p, initial_value=pcon[0])
-            gillespy2_species.append(gillespy2_p)
+            for p, pcon in self.randomDNAChem.concentration_lookup['conP'].items():
+                gillespy2_p = gillespy2.Species(name=p, initial_value=pcon[0])
+                gillespy2_species.append(gillespy2_p)
+        else:
+            for u, ucon in self.randomDNAChem.concentration_lookup['conU'].items():
+                gillespy2_u = gillespy2.Species(name=u, initial_value=int(self.previous_gillespy2_result[u][-1]))
+                gillespy2_species.append(gillespy2_u)
+
+            for l, lcon in self.randomDNAChem.concentration_lookup['conL'].items():
+                gillespy2_l = gillespy2.Species(name=l, initial_value=int(self.previous_gillespy2_result[l][-1]))
+                gillespy2_species.append(gillespy2_l)
+
+            for f, fcon in self.randomDNAChem.concentration_lookup['conF'].items():
+                gillespy2_f = gillespy2.Species(name=f, initial_value=int(self.previous_gillespy2_result[f][-1]))
+                gillespy2_species.append(gillespy2_f)
+
+            for p, pcon in self.randomDNAChem.concentration_lookup['conP'].items():
+                gillespy2_p = gillespy2.Species(name=p, initial_value=int(self.previous_gillespy2_result[p][-1]))
+                gillespy2_species.append(gillespy2_p)
 
         self.add_species(gillespy2_species)
 
@@ -197,30 +217,29 @@ if __name__ == '__main__':
 
     # Non-perturb period
     gillespy2_model = RandomDNAChemPerturbationGillespy2(non_gillespy2_chem=randomDNAChem,
-                                                         rate_in_timeIndex=0, # index 0 for time t = 0
+                                                         rate_in_timeIndex=0, # index 0 for time t=0
                                                          period_start=randomDNAChem.time_params['time_array'][0],
-                                                         period_end=randomDNAChem.time_params['time_array'][1])
+                                                         period_end=randomDNAChem.time_params['time_array'][1],
+                                                         previous_gillespy2_result=None)
     gillespy2_result = gillespy2_model.run(number_of_trajectories=num_trajectories)
+    print(gillespy2_result)
     gillespy2_results.append(gillespy2_result)
     for index in range(num_trajectories):
         trajectory = gillespy2_result[index]
         for species_index, species in enumerate(randomDNAChem.species_lookup['S']):
-            # print(trajectory['time'])
-            # print(trajectory['{}'.format(species)])
-
             species_plot = plt.plot(trajectory['time'],
                                     trajectory['{}'.format(species)],
                                     color=color_array[species_index],
                                     label=species)
 
     # Perturb period
-    for time_index in range(1, len(randomDNAChem.time_params['time_array']) - 4):
-        print(time_index)
+    for time_index in range(1, len(randomDNAChem.time_params['time_array']) - 1):
         rate_in_timeIndex = time_index
         gillespy2_model = RandomDNAChemPerturbationGillespy2(non_gillespy2_chem=randomDNAChem,
-                                                             rate_in_timeIndex=rate_in_timeIndex, # index 1 for time t = 1
+                                                             rate_in_timeIndex=rate_in_timeIndex, # index 1 for time t=1 and so on
                                                              period_start=randomDNAChem.time_params['time_array'][time_index] - (randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold']*(time_index-1)),
-                                                             period_end=randomDNAChem.time_params['time_array'][time_index + 1] - (randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold']*(time_index-1)))
+                                                             period_end=randomDNAChem.time_params['time_array'][time_index + 1] - (randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold']*(time_index-1)),
+                                                             previous_gillespy2_result=gillespy2_result)
         gillespy2_result = gillespy2_model.run(number_of_trajectories=num_trajectories)
         gillespy2_results.append(gillespy2_result)
         for index in range(num_trajectories):
@@ -232,23 +251,6 @@ if __name__ == '__main__':
                                         trajectory['{}'.format(species)],
                                         color=color_array[species_index],
                                         label=species)
-
-    # # Perturb period
-    # for time_index in range(1, len(randomDNAChem.time_params['time_array']) - 1):
-    #     rate_in_timeIndex = time_index
-    #     gillespy2_model = RandomDNAChemPerturbationGillespy2(non_gillespy2_chem=randomDNAChem,
-    #                                                          rate_in_timeIndex=rate_in_timeIndex, # index 1 and higher for t = t_perturb + t_hold
-    #                                                          period_start=randomDNAChem.time_params['time_array'][time_index] - randomDNAChem.time_params['t_perturb']*time_index,
-    #                                                          period_end=randomDNAChem.time_params['time_array'][time_index + 1] - randomDNAChem.time_params['t_perturb']*time_index)
-    #     gillespy2_result = gillespy2_model.run(number_of_trajectories=num_trajectories)
-    #     gillespy2_results.append(gillespy2_result)
-    #     # for index in range(num_trajectories):
-    #     #     trajectory = gillespy2_result[index]
-    #     #     for species_index, species in enumerate(randomDNAChem.species_lookup['S']):
-    #     #         species_plot = plt.plot(trajectory['time'], 
-    #     #                        trajectory['{}'.format(species)], 
-    #     #                        color=color_array[species_index],
-    #     #                        label=species)
 
     # print(gillespy2_results)
     # for gillespy2_result in gillespy2_results:
