@@ -577,6 +577,7 @@ class RandomDNAStrandDisplacementCircuit(object):
             Method to calculate the time-related variables and update the time_params dictionary
         '''
 
+        t_start = self.time_params['t_start']
         t_end = self.time_params['t_end']
         t_perturb = self.time_params['t_perturb']
         t_hold = self.time_params['t_hold']
@@ -585,8 +586,8 @@ class RandomDNAStrandDisplacementCircuit(object):
         time_array = list(np.arange(start = self.time_params['t_start'] + self.time_params['t_perturb'],
                                     stop  = self.time_params['t_end'],
                                     step  = self.time_params['t_hold']))
-        time_array = tuple([0] + time_array)
-        if len(time_array) != self.time_params['num_perturb'] + 1:
+        time_array = tuple([t_start] + time_array + [t_end])
+        if len(time_array) != self.time_params['num_perturb'] + 2: # t_start and t_end elements
             raise BaseException
         self.time_params.update({'time_array': time_array})
 
@@ -612,7 +613,7 @@ class RandomDNAStrandDisplacementCircuit(object):
         '''
 
         perturbation_lookup = {}
-        for time_index, time in enumerate(self.time_params['time_array']):
+        for time_index, time in enumerate(self.time_params['time_array'][0:-1]):
             perturbation_lookup.update({time: {}})
             for r_in, rate_ins in self.rateConst_lookup['rate_IN'].items():
                 perturbation_lookup[time].update({r_in: rate_ins[time_index]})

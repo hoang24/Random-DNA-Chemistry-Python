@@ -46,7 +46,7 @@ def main(argv):
                    '#008000', '#008080', '#800000', '#800080', '#808000', 
                    '#808080', '#C0C0C0', '#FF0000', '#FF00FF', '#FFFF00',
                    '#8B0000', '#006400', '#BDB76B', '#008B8B', '#191970']
-    
+
     plt.figure(figsize = (18,10))
     plt.title('Plot of all molecules over a simulation time')
     plt.xlabel('Time (s)')
