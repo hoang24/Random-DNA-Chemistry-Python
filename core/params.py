@@ -28,8 +28,8 @@ input_params = {
 }
 
 time_params = {
-    't_start': 0, # start simulation time
-    't_end': 1, # end simulation time
+    't_start': 0.00, # start simulation time
+    't_end': 1.00, # end simulation time
     't_perturb': 0.01, # time to start perturbing the chemistry
-    't_hold': 0.2, # input hold time (time delay between each perturbation)
+    't_hold': 0.20, # input hold time (time delay between each perturbation)
 }

@@ -222,7 +222,6 @@ if __name__ == '__main__':
                                                          period_end=randomDNAChem.time_params['time_array'][1],
                                                          previous_gillespy2_result=None)
     gillespy2_result = gillespy2_model.run(number_of_trajectories=num_trajectories)
-    print(gillespy2_result)
     gillespy2_results.append(gillespy2_result)
     for index in range(num_trajectories):
         trajectory = gillespy2_result[index]
@@ -234,41 +233,30 @@ if __name__ == '__main__':
 
     # Perturb period
     for time_index in range(1, len(randomDNAChem.time_params['time_array']) - 1):
-        rate_in_timeIndex = time_index
+        print(time_index)
+        time_offset = randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold'] * (time_index - 1)
         gillespy2_model = RandomDNAChemPerturbationGillespy2(non_gillespy2_chem=randomDNAChem,
-                                                             rate_in_timeIndex=rate_in_timeIndex, # index 1 for time t=1 and so on
-                                                             period_start=randomDNAChem.time_params['time_array'][time_index] - (randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold']*(time_index-1)),
-                                                             period_end=randomDNAChem.time_params['time_array'][time_index + 1] - (randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold']*(time_index-1)),
+                                                             rate_in_timeIndex=time_index, # index 1 for time t=1 and so on
+                                                             period_start=randomDNAChem.time_params['time_array'][time_index] - time_offset,
+                                                             period_end=randomDNAChem.time_params['time_array'][time_index + 1] - time_offset,
                                                              previous_gillespy2_result=gillespy2_result)
         gillespy2_result = gillespy2_model.run(number_of_trajectories=num_trajectories)
         gillespy2_results.append(gillespy2_result)
         for index in range(num_trajectories):
             trajectory = gillespy2_result[index]
             for species_index, species in enumerate(randomDNAChem.species_lookup['S']):
-                print(trajectory['time'])
-                print(trajectory['{}'.format(species)])
-                species_plot = plt.plot(trajectory['time'] + randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold']*(time_index-1),
+                species_plot = plt.plot(trajectory['time'] + time_offset,
                                         trajectory['{}'.format(species)],
                                         color=color_array[species_index],
                                         label=species)
 
-    # print(gillespy2_results)
-    # for gillespy2_result in gillespy2_results:
-    #     for index in range(num_trajectories):
-    #         trajectory = gillespy2_result[index]
-    #         for species_index, species in enumerate(randomDNAChem.species_lookup['S']):
-    #             species_plot = plt.plot(trajectory['time'], 
-    #                            trajectory['{}'.format(species)], 
-    #                            color=color_array[species_index],
-    #                            label=species)
-
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = OrderedDict(zip(labels, handles))
     plt.legend(by_label.values(), by_label.keys(), loc='best')
-    # plot_name = 
+    plot_name = 'random_dna_chem_with_perturb'
     try:
         plot_name
     except NameError:
         plt.show()
     else:
-        plt.savefig('plots/' + plot_name + '.png')
+        plt.savefig('plots/' + plot_name + '.eps')
