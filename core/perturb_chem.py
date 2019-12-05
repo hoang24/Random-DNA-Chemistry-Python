@@ -233,7 +233,6 @@ if __name__ == '__main__':
 
     # Perturb period
     for time_index in range(1, len(randomDNAChem.time_params['time_array']) - 1):
-        print(time_index)
         time_offset = randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold'] * (time_index - 1)
         gillespy2_model = RandomDNAChemPerturbationGillespy2(non_gillespy2_chem=randomDNAChem,
                                                              rate_in_timeIndex=time_index, # index 1 for time t=1 and so on
@@ -253,7 +252,7 @@ if __name__ == '__main__':
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = OrderedDict(zip(labels, handles))
     plt.legend(by_label.values(), by_label.keys(), loc='best')
-    plot_name = 'random_dna_chem_with_perturb'
+    # plot_name = 'random_dna_chem_with_perturb'
     try:
         plot_name
     except NameError:
