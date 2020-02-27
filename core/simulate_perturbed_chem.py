@@ -7,7 +7,7 @@ import sys, getopt
 
 
 randomDNAChem = RandomDNAStrandDisplacementCircuit(input_params=input_params, 
-                                                       time_params=time_params)
+                                                   time_params=time_params)
 
 color_array = ['#000000', '#0000FF', '#00FF00', '#00FFFF', '#000080',
                '#008000', '#008080', '#800000', '#800080', '#808000',
