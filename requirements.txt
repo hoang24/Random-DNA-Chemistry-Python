@@ -2,3 +2,4 @@ numpy
 scipy
 matplotlib
 gillespy2
+torch
