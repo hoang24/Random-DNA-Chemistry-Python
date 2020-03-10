@@ -1,8 +1,9 @@
 from params import input_params, time_params
 from random_dna_chem import RandomDNAStrandDisplacementCircuit
 from perturb_chem import RandomDNAChemPerturbationGillespy2
-from collections import OrderedDict
 import matplotlib.pyplot as plt
+from collections import OrderedDict
+
 
 import torch
 from torch import nn
@@ -178,7 +179,18 @@ except NameError:
 else:
     plt.savefig('plots/' + plot_name + '.eps')
 
-# Save concentration data from reservoir to be inputs of readout layers
+# Save concentration data from reservoir to be inputs of readout layers (only the one trajectory)
+trajectory_in_use = 0
+time_lookup = []
+for period_index in range(randomDNAChem.time_params['num_perturb'] + 1): # number of periods 
+    time_lookup += list(gillespy2_results[period_index][trajectory_in_use]['time'])
+
+concentration_lookup = {}
+for species_name in randomDNAChem.species_lookup['S']:
+    concentrations = []
+    for period_index in range(randomDNAChem.time_params['num_perturb'] + 1): # number of periods 
+        concentrations += list(gillespy2_results[period_index][trajectory_in_use][species_name])
+    concentration_lookup.update({'{}'.format(species_name): concentrations})
 
 
 # Training
