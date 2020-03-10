@@ -65,9 +65,8 @@ def train_readout(readout, results, epochs, device):
             # Stats
             losses.append(loss.item())
             running_loss += loss.item()
-            if i % 10000 == 0:
-                print("\tepoch {}, inst {:<5}\trunning loss: {}".format(epoch, i, running_loss))
-                running_loss = 0
+            print("\tepoch {}, inst {:<5}\trunning loss: {}".format(epoch, i, running_loss))
+            running_loss = 0
 
     # Return list of losses
     return losses
@@ -101,8 +100,7 @@ def test_readout(readout, results, device):
             correct += 1
 
         # Stats
-        if i % 10000 == 0:
-            print("\tinst {:<5}\tcurrent accuracy: {:.3f}%".format(i, (correct / total) * 100))
+        print("\tinst {:<5}\tcurrent accuracy: {:.3f}%".format(i, (correct / total) * 100))
 
     # Print final result
     print("\tFinal accuracy: {:.3f}%".format((correct / total) * 100))
@@ -206,6 +204,12 @@ for species_name in randomDNAChem.species_lookup['S']:
     for time_index in range(randomDNAChem.time_params['num_perturb'] + 1): # number of periods 
         concentrations += list(gillespy2_results[time_index][trajectory_in_use][species_name])
     concentration_lookup.update({'{}'.format(species_name): concentrations})
+
+concentration_lookup_scaled = concentration_lookup.copy()
+for species_name, concentration in concentration_lookup.items():
+    scale_factor = max(concentration) / 10 # scale the concentration value between 0 and 10
+    for i in range(len(concentration)):
+        concentration_lookup_scaled[species_name][i] = concentration[i] / scale_factor
 
 
 # Training
