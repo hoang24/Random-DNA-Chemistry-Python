@@ -181,15 +181,16 @@ else:
 
 # Save concentration data from reservoir to be inputs of readout layers (only the one trajectory)
 trajectory_in_use = 0
-time_lookup = []
-for period_index in range(randomDNAChem.time_params['num_perturb'] + 1): # number of periods 
-    time_lookup += list(gillespy2_results[period_index][trajectory_in_use]['time'])
+time_lookup = list(gillespy2_results[0][trajectory_in_use]['time']) # time vector at non-perturbed period
+for time_index in range(1, len(randomDNAChem.time_params['time_array']) - 1): # time vector at perturbed period
+    time_offset = randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold'] * (time_index - 1)
+    time_lookup += list(gillespy2_results[time_index][trajectory_in_use]['time'] + time_offset)
 
 concentration_lookup = {}
 for species_name in randomDNAChem.species_lookup['S']:
     concentrations = []
-    for period_index in range(randomDNAChem.time_params['num_perturb'] + 1): # number of periods 
-        concentrations += list(gillespy2_results[period_index][trajectory_in_use][species_name])
+    for time_index in range(randomDNAChem.time_params['num_perturb'] + 1): # number of periods 
+        concentrations += list(gillespy2_results[time_index][trajectory_in_use][species_name])
     concentration_lookup.update({'{}'.format(species_name): concentrations})
 
 
