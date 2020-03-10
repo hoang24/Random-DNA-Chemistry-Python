@@ -37,17 +37,24 @@ def train_readout(readout, results, epochs, device):
     losses = []
     running_loss = 0
 
+    x_matrix = [] # matrix of all concentration vectors
+    for concentration in results.values():
+        x_matrix.append(concentration)
+
     # Go through each epoch
     for epoch in range(epochs):
         # Go through each timestep
-        for t in randomDNAChem.time_params.time_array:
-
+        for i in range(len(results['U0'])):
             # Build the input and target
-            x = torch.Tensor()
-            y = torch.Tensor()
+            target = [results['U0'][i]] # target vector is concentration of U0 species
+            x_matrix_i = [] # vector of the ith element of each species concentration in matrix
+            for species_index in range(len(concentration_lookup)):
+                x_matrix_i.append(x_matrix[species_index][i]) 
+            x = torch.Tensor(x_matrix_i)
+            y = torch.Tensor(target)
 
             # Zero the parameter gradients
-            optimizer.zerograd()
+            optimizer.zero_grad()
 
             # Make a forward pass, calculate loss, and backpropogate
             output = readout(x)
@@ -73,12 +80,19 @@ def test_readout(readout, results, device):
     total = 0
     correct = 0
 
-    # Go through each timestep
-    for t in randomDNAChem.time_params.time_array:
+    x_matrix = [] # matrix of all concentration vectors
+    for concentration in results.values():
+        x_matrix.append(concentration)
 
+    # Go through each timestep
+    for i in range(len(results['U0'])):
         # Build the input and target
-        x = torch.Tensor()
-        y = torch.Tensor()
+        target = [results['U0'][i]] # target vector is concentration of U0 species
+        x_matrix_i = [] # vector of the ith element of each species concentration in matrix
+        for species_index in range(len(concentration_lookup)):
+            x_matrix_i.append(x_matrix[species_index][i]) 
+        x = torch.Tensor(x_matrix_i)
+        y = torch.Tensor(target)
 
         # Make a forward pass, check for accuracy
         output = readout(x)
@@ -113,7 +127,7 @@ plt.xlabel('Time (s)')
 plt.ylabel('Number of molecules')
 
 gillespy2_results = []
-num_trajectories = 5
+num_trajectories = 2
 
 # Creating the Gillespy2 chemistry model in the non-perturb period
 gillespy2_model = RandomDNAChemPerturbationGillespy2(non_gillespy2_chem=randomDNAChem,
@@ -197,8 +211,9 @@ for species_name in randomDNAChem.species_lookup['S']:
 # Training
 print('Training model: ')
 readout = ReadOutLayer(numIn=numIn)
-losses = train_readout(readout=readout, results=train_results, epochs=1, device=device)
+losses = train_readout(readout=readout, results=concentration_lookup, epochs=1, device=device)
 
 
 # Testing
 print('Testing model: ')
+test_readout(readout=readout, results=concentration_lookup, device=device)
