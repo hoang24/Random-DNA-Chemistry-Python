@@ -65,7 +65,7 @@ def train_readout(readout, results, epochs, device):
             # Stats
             losses.append(loss.item())
             running_loss += loss.item()
-            if t % 10000 == 0:
+            if i % 10000 == 0:
                 print("\tepoch {}, inst {:<5}\trunning loss: {}".format(epoch, i, running_loss))
                 running_loss = 0
 
@@ -101,8 +101,8 @@ def test_readout(readout, results, device):
             correct += 1
 
         # Stats
-        if t % 10000 == 0:
-            print("\tinst {:<5}\tcurrent accuracy: {:.3f}%".format(t, (correct / total) * 100))
+        if i % 10000 == 0:
+            print("\tinst {:<5}\tcurrent accuracy: {:.3f}%".format(i, (correct / total) * 100))
 
     # Print final result
     print("\tFinal accuracy: {:.3f}%".format((correct / total) * 100))
