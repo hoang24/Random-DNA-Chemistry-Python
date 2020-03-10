@@ -65,8 +65,9 @@ def train_readout(readout, results, epochs, device):
             # Stats
             losses.append(loss.item())
             running_loss += loss.item()
-            print("\tepoch {}, inst {:<5}\trunning loss: {}".format(epoch, i, running_loss))
-            running_loss = 0
+            if i % 1000 == 0: # calculate cumulative loss over 1000 timestep
+                print("\tepoch {}, inst {:<4}\trunning loss: {}".format(epoch, i, running_loss))
+                running_loss = 0
 
     # Return list of losses
     return losses
@@ -100,7 +101,8 @@ def test_readout(readout, results, device):
             correct += 1
 
         # Stats
-        print("\tinst {:<5}\tcurrent accuracy: {:.3f}%".format(i, (correct / total) * 100))
+        if i % 1000 == 0: # calculate cumulative accuracy over the entire simulation time up to each 1000 timestep
+            print("\tinst {:<4}\tcurrent accuracy: {:.3f}%".format(i, (correct / total) * 100))
 
     # Print final result
     print("\tFinal accuracy: {:.3f}%".format((correct / total) * 100))
@@ -215,9 +217,9 @@ for species_name, concentration in concentration_lookup.items():
 # Training
 print('Training model: ')
 readout = ReadOutLayer(numIn=numIn)
-losses = train_readout(readout=readout, results=concentration_lookup, epochs=1, device=device)
+losses = train_readout(readout=readout, results=concentration_lookup_scaled, epochs=1, device=device)
 
 
 # Testing
 print('Testing model: ')
-test_readout(readout=readout, results=concentration_lookup, device=device)
+test_readout(readout=readout, results=concentration_lookup_scaled, device=device)
