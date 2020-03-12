@@ -195,7 +195,8 @@ except NameError:
 else:
     plt.savefig('plots/' + plot_name + '.eps')
 
-# Save concentration data from reservoir to be inputs of readout layers (only the one trajectory)
+
+# Create trainset: Concentration from reservoir = readout inputs (use trajectory 0 for trainset)
 trajectory_in_use = 0
 time_lookup = list(gillespy2_results[0][trajectory_in_use]['time']) # time vector at non-perturbed period
 for time_index in range(1, len(randomDNAChem.time_params['time_array']) - 1): # time vector at perturbed period
@@ -209,18 +210,17 @@ for species_name in randomDNAChem.species_lookup['S']:
         concentrations += list(gillespy2_results[time_index][trajectory_in_use][species_name])
     concentration_lookup.update({'{}'.format(species_name): concentrations})
 
-concentration_lookup_scaled = concentration_lookup.copy()
+trainset = concentration_lookup.copy() # trainset is a scaled concentration lookup
 for species_name, concentration in concentration_lookup.items():
     scale_factor = max(concentration) / 10 # scale the concentration value between 0 and 10
     for i in range(len(concentration)):
-        concentration_lookup_scaled[species_name][i] = concentration[i] / scale_factor
-
+        trainset[species_name][i] = concentration[i] / scale_factor
 
 # Training
 print('Training model: ')
 readout = ReadOutLayer(numIn=numIn)
 num_epoch = 5
-losses = train_readout(readout=readout, results=concentration_lookup_scaled, epochs=num_epoch, device=device)
+losses = train_readout(readout=readout, results=trainset, epochs=num_epoch, device=device)
 avg_losses_per_epoch = []
 for i in range(num_epoch): # list index 0 (epoch 1) to list index 4 (epoch 5)
     avg_losses_per_epoch.append(np.mean(losses[i]))
@@ -230,9 +230,30 @@ plt.title('Plot of losses vs. epochs')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.plot(range(1, num_epoch+1), avg_losses_per_epoch)
+# plt.savefig('losses_vs_epochs' + '.eps')
 plt.show()
 
 
+# Create testset: Concentration from reservoir = readout inputs (use trajectory 1 for testset)
+trajectory_in_use = 1
+time_lookup = list(gillespy2_results[0][trajectory_in_use]['time']) # time vector at non-perturbed period
+for time_index in range(1, len(randomDNAChem.time_params['time_array']) - 1): # time vector at perturbed period
+    time_offset = randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold'] * (time_index - 1)
+    time_lookup += list(gillespy2_results[time_index][trajectory_in_use]['time'] + time_offset)
+
+concentration_lookup = {}
+for species_name in randomDNAChem.species_lookup['S']:
+    concentrations = []
+    for time_index in range(randomDNAChem.time_params['num_perturb'] + 1): # number of periods 
+        concentrations += list(gillespy2_results[time_index][trajectory_in_use][species_name])
+    concentration_lookup.update({'{}'.format(species_name): concentrations})
+
+testset = concentration_lookup.copy() # testset is a scaled concentration lookup
+for species_name, concentration in concentration_lookup.items():
+    scale_factor = max(concentration) / 10 # scale the concentration value between 0 and 10
+    for i in range(len(concentration)):
+        testset[species_name][i] = concentration[i] / scale_factor
+
 # Testing
 print('Testing model: ')
-test_readout(readout=readout, results=concentration_lookup_scaled, device=device)
+test_readout(readout=readout, results=testset, device=device)
