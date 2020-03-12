@@ -3,6 +3,7 @@ from random_dna_chem import RandomDNAStrandDisplacementCircuit
 from perturb_chem import RandomDNAChemPerturbationGillespy2
 import matplotlib.pyplot as plt
 from collections import OrderedDict
+import numpy as np
 
 
 import torch
@@ -43,6 +44,7 @@ def train_readout(readout, results, epochs, device):
 
     # Go through each epoch
     for epoch in range(epochs):
+        losses_per_epoch = []
         # Go through each timestep
         for i in range(len(results['U0'])):
             # Build the input and target
@@ -63,13 +65,13 @@ def train_readout(readout, results, epochs, device):
             optimizer.step()
 
             # Stats
-            losses.append(loss.item())
+            losses_per_epoch.append(loss.item())
             running_loss += loss.item()
             if i % 1000 == 0: # calculate cumulative loss over 1000 timestep
                 print("\tepoch {}, inst {:<4}\trunning loss: {}".format(epoch, i, running_loss))
                 running_loss = 0
-
-    # Return list of losses
+        losses.append(losses_per_epoch)
+    # Return list of losses, containing list of losses per epoch
     return losses
 
 
@@ -217,7 +219,18 @@ for species_name, concentration in concentration_lookup.items():
 # Training
 print('Training model: ')
 readout = ReadOutLayer(numIn=numIn)
-losses = train_readout(readout=readout, results=concentration_lookup_scaled, epochs=1, device=device)
+num_epoch = 5
+losses = train_readout(readout=readout, results=concentration_lookup_scaled, epochs=num_epoch, device=device)
+avg_losses_per_epoch = []
+for i in range(num_epoch): # list index 0 (epoch 1) to list index 4 (epoch 5)
+    avg_losses_per_epoch.append(np.mean(losses[i]))
+
+plt.figure(figsize = (18,10))
+plt.title('Plot of losses vs. epochs')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.plot(range(1, num_epoch+1), avg_losses_per_epoch)
+plt.show()
 
 
 # Testing
