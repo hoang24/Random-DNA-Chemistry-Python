@@ -1,8 +1,10 @@
 from params import input_params, time_params
 from random_dna_chem import RandomDNAStrandDisplacementCircuit
 from perturb_chem import RandomDNAChemPerturbationGillespy2
-from collections import OrderedDict
 import matplotlib.pyplot as plt
+from collections import OrderedDict
+import numpy as np
+
 
 import torch
 from torch import nn
@@ -36,17 +38,25 @@ def train_readout(readout, results, epochs, device):
     losses = []
     running_loss = 0
 
+    x_matrix = [] # matrix of all concentration vectors
+    for concentration in results.values():
+        x_matrix.append(concentration)
+
     # Go through each epoch
     for epoch in range(epochs):
+        losses_per_epoch = []
         # Go through each timestep
-        for t in randomDNAChem.time_params.time_array:
-
+        for i in range(len(results['U0'])):
             # Build the input and target
-            x = torch.Tensor()
-            y = torch.Tensor()
+            target = [results['U0'][i]] # target vector is concentration of U0 species
+            x_matrix_i = [] # vector of the ith element of each species concentration in matrix
+            for species_index in range(len(concentration_lookup)):
+                x_matrix_i.append(x_matrix[species_index][i]) 
+            x = torch.Tensor(x_matrix_i)
+            y = torch.Tensor(target)
 
             # Zero the parameter gradients
-            optimizer.zerograd()
+            optimizer.zero_grad()
 
             # Make a forward pass, calculate loss, and backpropogate
             output = readout(x)
@@ -55,13 +65,13 @@ def train_readout(readout, results, epochs, device):
             optimizer.step()
 
             # Stats
-            losses.append(loss.item())
+            losses_per_epoch.append(loss.item())
             running_loss += loss.item()
-            if t % 10000 == 0:
-                print("\tepoch {}, inst {:<5}\trunning loss: {}".format(epoch, i, running_loss))
+            if i % 1000 == 0: # calculate cumulative loss over 1000 timestep
+                print("\tepoch {}, inst {:<4}\trunning loss: {}".format(epoch, i, running_loss))
                 running_loss = 0
-
-    # Return list of losses
+        losses.append(losses_per_epoch)
+    # Return list of losses, containing list of losses per epoch
     return losses
 
 
@@ -72,12 +82,19 @@ def test_readout(readout, results, device):
     total = 0
     correct = 0
 
-    # Go through each timestep
-    for t in randomDNAChem.time_params.time_array:
+    x_matrix = [] # matrix of all concentration vectors
+    for concentration in results.values():
+        x_matrix.append(concentration)
 
+    # Go through each timestep
+    for i in range(len(results['U0'])):
         # Build the input and target
-        x = torch.Tensor()
-        y = torch.Tensor()
+        target = [results['U0'][i]] # target vector is concentration of U0 species
+        x_matrix_i = [] # vector of the ith element of each species concentration in matrix
+        for species_index in range(len(concentration_lookup)):
+            x_matrix_i.append(x_matrix[species_index][i]) 
+        x = torch.Tensor(x_matrix_i)
+        y = torch.Tensor(target)
 
         # Make a forward pass, check for accuracy
         output = readout(x)
@@ -86,8 +103,8 @@ def test_readout(readout, results, device):
             correct += 1
 
         # Stats
-        if t % 10000 == 0:
-            print("\tinst {:<5}\tcurrent accuracy: {:.3f}%".format(t, (correct / total) * 100))
+        if i % 1000 == 0: # calculate cumulative accuracy over the entire simulation time up to each 1000 timestep
+            print("\tinst {:<4}\tcurrent accuracy: {:.3f}%".format(i, (correct / total) * 100))
 
     # Print final result
     print("\tFinal accuracy: {:.3f}%".format((correct / total) * 100))
@@ -112,7 +129,7 @@ plt.xlabel('Time (s)')
 plt.ylabel('Number of molecules')
 
 gillespy2_results = []
-num_trajectories = 5
+num_trajectories = 2
 
 # Creating the Gillespy2 chemistry model in the non-perturb period
 gillespy2_model = RandomDNAChemPerturbationGillespy2(non_gillespy2_chem=randomDNAChem,
@@ -178,14 +195,65 @@ except NameError:
 else:
     plt.savefig('plots/' + plot_name + '.eps')
 
-# Save concentration data from reservoir to be inputs of readout layers
 
+# Create trainset: Concentration from reservoir = readout inputs (use trajectory 0 for trainset)
+trajectory_in_use = 0
+time_lookup = list(gillespy2_results[0][trajectory_in_use]['time']) # time vector at non-perturbed period
+for time_index in range(1, len(randomDNAChem.time_params['time_array']) - 1): # time vector at perturbed period
+    time_offset = randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold'] * (time_index - 1)
+    time_lookup += list(gillespy2_results[time_index][trajectory_in_use]['time'] + time_offset)
+
+concentration_lookup = {}
+for species_name in randomDNAChem.species_lookup['S']:
+    concentrations = []
+    for time_index in range(randomDNAChem.time_params['num_perturb'] + 1): # number of periods 
+        concentrations += list(gillespy2_results[time_index][trajectory_in_use][species_name])
+    concentration_lookup.update({'{}'.format(species_name): concentrations})
+
+trainset = concentration_lookup.copy() # trainset is a scaled concentration lookup
+for species_name, concentration in concentration_lookup.items():
+    scale_factor = max(concentration) / 10 # scale the concentration value between 0 and 10
+    for i in range(len(concentration)):
+        trainset[species_name][i] = concentration[i] / scale_factor
 
 # Training
 print('Training model: ')
 readout = ReadOutLayer(numIn=numIn)
-losses = train_readout(readout=readout, results=train_results, epochs=1, device=device)
+num_epoch = 5
+losses = train_readout(readout=readout, results=trainset, epochs=num_epoch, device=device)
+avg_losses_per_epoch = []
+for i in range(num_epoch): # list index 0 (epoch 1) to list index 4 (epoch 5)
+    avg_losses_per_epoch.append(np.mean(losses[i]))
 
+plt.figure(figsize = (18,10))
+plt.title('Plot of losses vs. epochs')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.plot(range(1, num_epoch+1), avg_losses_per_epoch)
+# plt.savefig('losses_vs_epochs' + '.eps')
+plt.show()
+
+
+# Create testset: Concentration from reservoir = readout inputs (use trajectory 1 for testset)
+trajectory_in_use = 1
+time_lookup = list(gillespy2_results[0][trajectory_in_use]['time']) # time vector at non-perturbed period
+for time_index in range(1, len(randomDNAChem.time_params['time_array']) - 1): # time vector at perturbed period
+    time_offset = randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold'] * (time_index - 1)
+    time_lookup += list(gillespy2_results[time_index][trajectory_in_use]['time'] + time_offset)
+
+concentration_lookup = {}
+for species_name in randomDNAChem.species_lookup['S']:
+    concentrations = []
+    for time_index in range(randomDNAChem.time_params['num_perturb'] + 1): # number of periods 
+        concentrations += list(gillespy2_results[time_index][trajectory_in_use][species_name])
+    concentration_lookup.update({'{}'.format(species_name): concentrations})
+
+testset = concentration_lookup.copy() # testset is a scaled concentration lookup
+for species_name, concentration in concentration_lookup.items():
+    scale_factor = max(concentration) / 10 # scale the concentration value between 0 and 10
+    for i in range(len(concentration)):
+        testset[species_name][i] = concentration[i] / scale_factor
 
 # Testing
 print('Testing model: ')
+test_readout(readout=readout, results=testset, device=device)
