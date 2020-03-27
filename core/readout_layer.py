@@ -212,7 +212,7 @@ for species_name in randomDNAChem.species_lookup['S']:
 
 trainset = concentration_lookup.copy() # trainset is a scaled concentration lookup
 for species_name, concentration in concentration_lookup.items():
-    scale_factor = max(concentration) / 10 # scale the concentration value between 0 and 10
+    scale_factor = max(concentration) / 1 # scale the concentration value between 0 and 1
     for i in range(len(concentration)):
         trainset[species_name][i] = concentration[i] / scale_factor
 
@@ -250,7 +250,7 @@ for species_name in randomDNAChem.species_lookup['S']:
 
 testset = concentration_lookup.copy() # testset is a scaled concentration lookup
 for species_name, concentration in concentration_lookup.items():
-    scale_factor = max(concentration) / 10 # scale the concentration value between 0 and 10
+    scale_factor = max(concentration) / 1 # scale the concentration value between 0 and 1
     for i in range(len(concentration)):
         testset[species_name][i] = concentration[i] / scale_factor
 
