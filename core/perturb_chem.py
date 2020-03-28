@@ -17,7 +17,7 @@ class RandomDNAChemPerturbationGillespy2(gillespy2.Model):
             previous_gillespy2_result (obj): gillespy2 result after run from the previous period
     '''
 
-    def __init__(self, non_gillespy2_chem, rate_in_timeIndex, period_start, period_end, previous_gillespy2_result):
+    def __init__(self, non_gillespy2_chem, rate_in_timeIndex, period_start, period_end, numel, previous_gillespy2_result):
         '''
             Init method to call the parent class (gillespy2.Model) and the class methods
             Args:
@@ -33,6 +33,7 @@ class RandomDNAChemPerturbationGillespy2(gillespy2.Model):
         self.rate_in_timeIndex = rate_in_timeIndex
         self.period_start = period_start
         self.period_end = period_end
+        self.numel = numel
         self.previous_gillespy2_result = previous_gillespy2_result
         self.convert_rates()
         self.convert_species()
@@ -196,7 +197,7 @@ class RandomDNAChemPerturbationGillespy2(gillespy2.Model):
         '''
         self.timespan(numpy.linspace(start=self.period_start, 
                                      stop=self.period_end, 
-                                     num=1001))
+                                     num=self.numel))
 
 if __name__ == '__main__':
     randomDNAChem = RandomDNAStrandDisplacementCircuit(input_params=input_params, 
@@ -220,6 +221,7 @@ if __name__ == '__main__':
                                                          rate_in_timeIndex=0, # index 0 for time t=0
                                                          period_start=randomDNAChem.time_params['time_array'][0],
                                                          period_end=randomDNAChem.time_params['time_array'][1],
+                                                         numel=1001,
                                                          previous_gillespy2_result=None)
     gillespy2_result = gillespy2_model.run(number_of_trajectories=num_trajectories)
     gillespy2_results.append(gillespy2_result)
@@ -238,6 +240,7 @@ if __name__ == '__main__':
                                                              rate_in_timeIndex=time_index, # index 1 for time t=1 and so on
                                                              period_start=randomDNAChem.time_params['time_array'][time_index] - time_offset,
                                                              period_end=randomDNAChem.time_params['time_array'][time_index + 1] - time_offset,
+                                                             numel=1001,
                                                              previous_gillespy2_result=gillespy2_result)
         gillespy2_result = gillespy2_model.run(number_of_trajectories=num_trajectories)
         gillespy2_results.append(gillespy2_result)
