@@ -1,13 +1,3 @@
-from params import input_params, time_params
-from random_dna_chem import RandomDNAStrandDisplacementCircuit
-from perturb_chem import RandomDNAChemPerturbationGillespy2
-import matplotlib.pyplot as plt
-from collections import OrderedDict
-import copy
-from more_itertools import locate
-import numpy as np
-
-
 import torch
 from torch import nn
 from torch.nn import functional
@@ -29,8 +19,19 @@ class ReadOutLayer(nn.Module):
         return self.output(x)
 
 
-# Train the readout layer
-def train_readout(readout, trainset, epochs, device):
+def train_readout(readout, trainset, target, epochs, device):
+    '''
+        Method to train the readout layer
+        Args:
+            readout (class): readout layer
+            trainset (dict): training set (concentration normalized from 0 to 1) over time for each species 
+                {'species': [scaledConcentration (list)]}
+            target (list): list of target for the readout over time 
+            epochs (int): number of epochs to train the network
+            device (torch.device): device to train on
+        Returns:
+            losses (list): list of losses, containing list of losses per epoch
+    '''
 
     # Define criterion and optimizer
     criterion = nn.MSELoss()
@@ -48,14 +49,14 @@ def train_readout(readout, trainset, epochs, device):
     for epoch in range(epochs):
         losses_per_epoch = []
         # Go through each timestep
-        for i in range(len(trainset['U0'])):
-            # Build the input and target
-            target = [trainset['U0'][i]] # target vector is concentration of U0 species
-            x_matrix_i = [] # vector of the ith element of each species concentration in matrix
+        for i in range(len(target)):
+            # Build the vertical slice of input and target at time i
+            y_hat = [target[i]] # target at a particular time i
+            x_matrix_i = [] # vertical vector contains each species concentration at time i
             for species_index in range(len(trainset)):
                 x_matrix_i.append(x_matrix[species_index][i]) 
             x = torch.Tensor(x_matrix_i)
-            y = torch.Tensor(target)
+            y = torch.Tensor(y_hat)
 
             # Zero the parameter gradients
             optimizer.zero_grad()
@@ -73,12 +74,22 @@ def train_readout(readout, trainset, epochs, device):
                 print("\tepoch {}, inst {:<4}\trunning loss: {}".format(epoch, i, running_loss))
                 running_loss = 0
         losses.append(losses_per_epoch)
-    # Return list of losses, containing list of losses per epoch
+
     return losses
 
 
-# Test the readout layer
-def test_readout(readout, testset, device):
+def test_readout(readout, testset, target, device):
+    '''
+        Method to test the readout layer
+        Args:
+            readout (class): readout layer
+            testset (dict): testing set (concentration normalized from 0 to 1) over time for each species 
+                {'species': [scaledConcentration (list)]}
+            target (list): list of target for the readout over time
+            device (torch.device): device to train on
+        Returns:
+            final_accuracy (float): final accuracy of the readout in percentage (%)
+    '''
 
     # Initialize tracking variables
     total = 0
@@ -89,14 +100,14 @@ def test_readout(readout, testset, device):
         x_matrix.append(concentration)
 
     # Go through each timestep
-    for i in range(len(testset['U0'])):
-        # Build the input and target
-        target = [testset['U0'][i]] # target vector is concentration of U0 species
-        x_matrix_i = [] # vector of the ith element of each species concentration in matrix
+    for i in range(len(target)):
+        # Build the vertical slice of input and target at time i
+        y_hat = [target[i]] # target at a particular time i 
+        x_matrix_i = [] # vertical vector contains each species concentration at time i
         for species_index in range(len(testset)):
             x_matrix_i.append(x_matrix[species_index][i]) 
         x = torch.Tensor(x_matrix_i)
-        y = torch.Tensor(target)
+        y = torch.Tensor(y_hat)
 
         # Make a forward pass, check for accuracy
         output = readout(x)
@@ -104,228 +115,14 @@ def test_readout(readout, testset, device):
         if abs(output.item() - y.item()) < 0.01:
             correct += 1
 
+        accuracy = (correct / total) * 100
+
         # Stats
         if i % 1000 == 0: # calculate cumulative accuracy over the entire simulation time up to each 1000 timestep
-            print("\tinst {:<4}\tcurrent accuracy: {:.3f}%".format(i, (correct / total) * 100))
+            print("\tinst {:<4}\tcurrent accuracy: {:.3f}%".format(i, accuracy))
 
     # Print final result
-    print("\tFinal accuracy: {:.3f}%".format((correct / total) * 100))
+    final_accuracy = accuracy
+    print("\tFinal accuracy: {:.3f}%".format(final_accuracy))
 
-
-# Load data
-print("\nGenerating data...")
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-randomDNAChem = RandomDNAStrandDisplacementCircuit(input_params=input_params, 
-                                                   time_params=time_params)
-numIn = randomDNAChem.species_lookup['nS']
-
-color_array = ['#000000', '#0000FF', '#00FF00', '#00FFFF', '#000080',
-               '#008000', '#008080', '#800000', '#800080', '#808000',
-               '#808080', '#C0C0C0', '#FF0000', '#FF00FF', '#FFFF00',
-               '#8B0000', '#006400', '#BDB76B', '#008B8B', '#191970']
-
-plt.figure(figsize = (18,10))
-plt.title('Plot of all molecules over a simulation time')
-plt.xlabel('Time (s)')
-plt.ylabel('Number of molecules')
-
-gillespy2_results = []
-num_trajectories = 2
-num_time_element = 1001
-
-# Creating the Gillespy2 chemistry model in the non-perturb period
-gillespy2_model = RandomDNAChemPerturbationGillespy2(non_gillespy2_chem=randomDNAChem,
-                                                     rate_in_timeIndex=0, # index 0 for time t=0
-                                                     period_start=randomDNAChem.time_params['time_array'][0],
-                                                     period_end=randomDNAChem.time_params['time_array'][1],
-                                                     numel=num_time_element,
-                                                     previous_gillespy2_result=None)
-
-# Result of stochastic Gillespie simulation for non-perturbation period
-gillespy2_result = gillespy2_model.run(number_of_trajectories=num_trajectories)
-
-# Result of stochastic Gillespie simulation for entire simulation time
-gillespy2_results.append(gillespy2_result)
-
-# Plot non-perturb period
-for index in range(num_trajectories):
-    trajectory = gillespy2_result[index]
-    for species_index, species in enumerate(randomDNAChem.species_lookup['S']):
-        species_plot = plt.plot(trajectory['time'],
-                                trajectory['{}'.format(species)],
-                                color=color_array[species_index],
-                                label=species)
-
-# Creating the Gillespy2 chemistry models in the perturb period
-for time_index in range(1, len(randomDNAChem.time_params['time_array']) - 1):
-    # Calculate the Gillespy2 time offset
-    time_offset = randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold'] * (time_index - 1)
-
-    trajectories = []
-    for index in range(num_trajectories):
-        previous_trajectory = gillespy2_result[index] # take the gillespy2_result from the previous period
-
-        # Creating one Gillespy2 chemistry model in one trajectory in one perturb period
-        gillespy2_model = RandomDNAChemPerturbationGillespy2(non_gillespy2_chem=randomDNAChem,
-                                                             rate_in_timeIndex=time_index, # index 1 for time t=1 and so on
-                                                             period_start=randomDNAChem.time_params['time_array'][time_index] - time_offset,
-                                                             period_end=randomDNAChem.time_params['time_array'][time_index + 1] - time_offset,
-                                                             numel=num_time_element,
-                                                             previous_gillespy2_result=previous_trajectory)
-        trajectory = gillespy2_model.run(number_of_trajectories=1) # run the single trajectory
-        trajectories.append(trajectory)
-    gillespy2_result = trajectories # gillespy2_result of the current period
-
-    # Result of stochastic Gillespie simulation for entire simulation time
-    gillespy2_results.append(gillespy2_result)
-
-    # Plot each of the perturb period
-    for index in range(num_trajectories):
-        trajectory = gillespy2_result[index]
-        for species_index, species in enumerate(randomDNAChem.species_lookup['S']):
-            species_plot = plt.plot(trajectory['time'] + time_offset,
-                                    trajectory['{}'.format(species)],
-                                    color=color_array[species_index],
-                                    label=species)
-
-handles, labels = plt.gca().get_legend_handles_labels()
-by_label = OrderedDict(zip(labels, handles))
-plt.legend(by_label.values(), by_label.keys(), loc='best')
-# plot_name = 'random_dna_chem_with_perturb_junk'
-try:
-    plot_name
-except NameError:
-    plt.show()
-else:
-    plt.savefig('plots/' + plot_name + '.eps')
-
-
-# Create trainset: Concentration from reservoir = readout inputs (use trajectory 0 for trainset)
-trajectory_in_use = 0
-time_lookup0 = list(gillespy2_results[0][trajectory_in_use]['time']) # time vector at non-perturbed period
-for time_index in range(1, randomDNAChem.time_params['num_perturb'] + 1): # time vector at perturbed period
-    time_offset = randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold'] * (time_index - 1)
-    time_per_period = np.delete(gillespy2_results[time_index][trajectory_in_use]['time'], 0) # delete the 0th element since repeat
-    time_lookup0 += list(time_per_period + time_offset)
-
-concentration_lookup0 = {}
-for species_name in randomDNAChem.species_lookup['S']:
-    concentrations = list(gillespy2_results[0][trajectory_in_use][species_name]) # concentration vector at non-perturbed period
-    for time_index in range(1, randomDNAChem.time_params['num_perturb'] + 1): # concentration vector at perturbed period
-        concentration_per_period = np.delete(gillespy2_results[time_index][trajectory_in_use][species_name], 0) # delete the 0th element since repeat
-        concentrations += list(concentration_per_period)
-    concentration_lookup0.update({'{}'.format(species_name): concentrations})
-
-trainset = copy.deepcopy(concentration_lookup0) # trainset is a scaled concentration lookup
-for species_name, concentration in trainset.items():
-    scale_factor = max(concentration) / 1 # scale the concentration value between 0 and 1
-    for i in range(len(concentration)):
-        trainset[species_name][i] = concentration[i] / scale_factor
-
-# Training
-print('Training model: ')
-readout = ReadOutLayer(numIn=numIn)
-num_epoch = 5
-losses = train_readout(readout=readout, trainset=trainset, epochs=num_epoch, device=device)
-avg_losses_per_epoch = []
-for i in range(num_epoch): # list index 0 (epoch 1) to list index 4 (epoch 5)
-    avg_losses_per_epoch.append(np.mean(losses[i]))
-
-plt.figure(figsize = (18,10))
-plt.title('Plot of losses vs. epochs')
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.plot(range(1, num_epoch+1), avg_losses_per_epoch)
-# plt.savefig('losses_vs_epochs' + '.eps')
-plt.show()
-
-
-# Create testset: Concentration from reservoir = readout inputs (use trajectory 1 for testset)
-trajectory_in_use = 1
-time_lookup1 = list(gillespy2_results[0][trajectory_in_use]['time']) # time vector at non-perturbed period
-for time_index in range(1, randomDNAChem.time_params['num_perturb'] + 1): # time vector at perturbed period
-    time_offset = randomDNAChem.time_params['t_perturb'] + randomDNAChem.time_params['t_hold'] * (time_index - 1)
-    time_per_period = np.delete(gillespy2_results[time_index][trajectory_in_use]['time'], 0) # delete the 0th element since repeat
-    time_lookup1 += list(time_per_period + time_offset)
-
-concentration_lookup1 = {}
-for species_name in randomDNAChem.species_lookup['S']:
-    concentrations = list(gillespy2_results[0][trajectory_in_use][species_name]) # concentration vector at non-perturbed period
-    for time_index in range(1, randomDNAChem.time_params['num_perturb'] + 1): # concentration vector at perturbed period
-        concentration_per_period = np.delete(gillespy2_results[time_index][trajectory_in_use][species_name], 0) # delete the 0th element since repeat
-        concentrations += list(concentration_per_period)
-    concentration_lookup1.update({'{}'.format(species_name): concentrations})
-
-testset = copy.deepcopy(concentration_lookup1) # testset is a scaled concentration lookup
-for species_name, concentration in testset.items():
-    scale_factor = max(concentration) / 1 # scale the concentration value between 0 and 1
-    for i in range(len(concentration)):
-        testset[species_name][i] = concentration[i] / scale_factor
-
-# Testing
-print('Testing model: ')
-test_readout(readout=readout, testset=testset, device=device)
-
-
-# Make influx rate array the same length as time array
-influx_lookup = randomDNAChem.rateConst_lookup['rate_IN'].copy()
-for r_in, rate_in in randomDNAChem.rateConst_lookup['rate_IN'].items():
-    influx_rate_per_reaction = []
-    for ir in rate_in:
-        influx_rate_per_reaction += [ir] * (num_time_element-1)
-    influx_rate_per_reaction.append(influx_rate_per_reaction[-1])
-    influx_lookup.update({'{}'.format(r_in): influx_rate_per_reaction})
-
-# Plot influx rate over time
-plt.figure(figsize = (18,10))
-plt.title('Plot of influx rates')
-plt.xlabel('time')
-plt.ylabel('influx rate')
-for reaction_index, (reaction, influx_rate) in enumerate(influx_lookup.items()):
-    plt.plot(time_lookup1, influx_rate, color=color_array[reaction_index], label=reaction)
-handles, labels = plt.gca().get_legend_handles_labels()
-by_label = OrderedDict(zip(labels, handles))
-plt.legend(by_label.values(), by_label.keys(), loc='best')
-plt.show()
-
-# Short-term memory task
-ST_lookup = influx_lookup.copy() # lookup dict for short term memory task target for all reactions
-for r_in, rate_in in ST_lookup.items():
-    ST_target_per_reaction = []
-    for ir_index in range(2, len(time_lookup1) + 1): # from index 2 to index end+1
-        ST_target_per_reaction.append(rate_in[ir_index - 1] + 2*rate_in[ir_index - 2])
-    ST_lookup.update({'{}'.format(r_in): ST_target_per_reaction})
-
-plt.figure(figsize = (18,10))
-plt.title('Plot of Short Term Memory Task target')
-plt.xlabel('time')
-plt.ylabel('ST memory target')
-for reaction_index, (reaction, ST_target) in enumerate(ST_lookup.items()):
-    plt.plot(time_lookup1[2:], ST_target[:-1], color=color_array[reaction_index], label=reaction)
-handles, labels = plt.gca().get_legend_handles_labels()
-by_label = OrderedDict(zip(labels, handles))
-plt.legend(by_label.values(), by_label.keys(), loc='best')
-plt.show()
-
-# Long-term memory task
-t_hold = randomDNAChem.time_params['t_hold']
-t_hold_index = time_lookup1.index(t_hold)
-t_hold_32_index = time_lookup1.index(t_hold*(3/2))
-LT_lookup = influx_lookup.copy() # lookup dict for short term memory task target for all reactions
-for r_in, rate_in in LT_lookup.items():
-    LT_target_per_reaction = []
-    for ir_index in range(t_hold_32_index, len(time_lookup1) + t_hold_index): # from index hold_time to index end + index (3/4)*hold_time
-        LT_target_per_reaction.append(rate_in[ir_index - t_hold_index] + (1/2)*rate_in[ir_index - t_hold_32_index])
-    LT_lookup.update({'{}'.format(r_in): LT_target_per_reaction})
-
-plt.figure(figsize = (18,10))
-plt.title('Plot of Long Term Memory Task target')
-plt.xlabel('time')
-plt.ylabel('LT memory target')
-for reaction_index, (reaction, LT_target) in enumerate(LT_lookup.items()):
-    plt.plot(time_lookup1[t_hold_32_index:], LT_target[:-t_hold_index], color=color_array[reaction_index], label=reaction)
-handles, labels = plt.gca().get_legend_handles_labels()
-by_label = OrderedDict(zip(labels, handles))
-plt.legend(by_label.values(), by_label.keys(), loc='best')
-plt.show()
+    return final_accuracy
