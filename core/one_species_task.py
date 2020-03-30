@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 
 
 # Load data from chemistry
-time_lookup, concentration_lookup = load_chem_data()
+time_lookup, concentration_lookup, randomDNAChem = load_chem_data()
 
 # Plot chemistry
-plot_concentration(time_lookup[0], concentration_lookup[0])
-plot_concentration(time_lookup[1], concentration_lookup[1])
+plot_concentration(time_lookup, concentration_lookup[0])
+plot_concentration(time_lookup, concentration_lookup[1])
 
 # Create trainset and testset
 trainset = create_trainset(concentration_lookup=concentration_lookup)
@@ -20,7 +20,7 @@ if len(trainset) != len(testset):
     raise BaseException
 
 # Create readout layer
-readout = ReadOutLayer(numIn=len(trainset))
+readout = ReadOutLayer(numIn=randomDNAChem.species_lookup['nS'])
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # Training

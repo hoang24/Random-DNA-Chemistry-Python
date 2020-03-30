@@ -77,6 +77,28 @@ def create_time_concentration_lookup (traj_in_use, randomDNAChem, gillespy2_resu
 
     return time_lookup, concentration_lookup
 
+def create_influx_lookup (randomDNAChem, num_time_element):
+    '''
+        Method to make influx rate array the same length as time array and create a lookup for influx rate of all species
+        Args:
+            randomDNAChem (class): random DNA chemistry class
+            time_lookup (list): time array from 0 to end of simulation time
+
+        Returns:
+            influx_lookup (dict): dictionary for influx rate of each species with length of time_lookup list
+                {'species': [influx_rate (list)]}
+    '''
+
+    influx_lookup = randomDNAChem.rateConst_lookup['rate_IN'].copy()
+    for r_in, rate_in in randomDNAChem.rateConst_lookup['rate_IN'].items():
+        influx_rate_per_reaction = []
+        for ir in rate_in:
+            influx_rate_per_reaction += [ir] * (num_time_element-1)
+        influx_rate_per_reaction.append(influx_rate_per_reaction[-1])
+        influx_lookup.update({'{}'.format(r_in): influx_rate_per_reaction})
+
+    return influx_lookup
+
 def plot_concentration (time_lookup, concentration_lookup):
     '''
         Method to plot concentration over time for a particular Gillespy2 trajectory
@@ -111,28 +133,6 @@ def plot_concentration (time_lookup, concentration_lookup):
     else:
         plt.savefig('plots/' + plot_name + '.eps')
 
-def create_influx_lookup (randomDNAChem):
-    '''
-        Method to make influx rate array the same length as time array and create a lookup for influx rate of all species
-        Args:
-            randomDNAChem (class): random DNA chemistry class
-            time_lookup (list): time array from 0 to end of simulation time
-
-        Returns:
-            influx_lookup (dict): dictionary for influx rate of each species with length of time_lookup list
-                {'species': [influx_rate (list)]}
-    '''
-
-    influx_lookup = randomDNAChem.rateConst_lookup['rate_IN'].copy()
-    for r_in, rate_in in randomDNAChem.rateConst_lookup['rate_IN'].items():
-        influx_rate_per_reaction = []
-        for ir in rate_in:
-            influx_rate_per_reaction += [ir] * (num_time_element-1)
-        influx_rate_per_reaction.append(influx_rate_per_reaction[-1])
-        influx_lookup.update({'{}'.format(r_in): influx_rate_per_reaction})
-
-    return influx_lookup
-
 def plot_influx (time_lookup, influx_lookup):
     '''
         Method to plot influx rate over time
@@ -163,4 +163,3 @@ def plot_influx (time_lookup, influx_lookup):
         plt.show()
     else:
         plt.savefig('plots/' + plot_name + '.eps')
-
