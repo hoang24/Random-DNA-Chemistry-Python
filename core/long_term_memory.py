@@ -55,6 +55,11 @@ by_label = OrderedDict(zip(labels, handles))
 plt.legend(by_label.values(), by_label.keys(), loc='best')
 plt.show()
 
+for reaction, influx in LT_lookup.items():
+    scale_factor = max(influx) / 1 # scale the influx value between 0 and 1
+    for i in range(len(influx)):
+        LT_lookup[reaction][i] = influx[i] / scale_factor
+
 
 # Training
 print('Training model: ')
