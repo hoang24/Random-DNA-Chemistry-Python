@@ -31,6 +31,7 @@ def train_readout(readout, trainset, target, epochs, device):
             device (torch.device): device to train on
         Returns:
             losses (list): list of losses, containing list of losses per epoch
+                losses[epochs][loss (list - time array length)]
     '''
 
     # Define criterion and optimizer
