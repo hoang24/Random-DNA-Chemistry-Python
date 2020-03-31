@@ -78,6 +78,7 @@ def analyze_error(losses, num_epoch):
             fitness_per_epoch (list of numpy.float64): list containing fitness per epoch
             avgLoss_per_epoch (list of numpy.float64): list containing average loss per epoch
     '''
+
     losses = np.array(losses)
     RMSE_per_epoch = []
     NRMSE_per_epoch = []
@@ -102,6 +103,7 @@ def plot_error(type_per_epoch, num_epoch, plot_type):
             num_epoch (int): number of epochs
             plot_type (str): type of plots ('RMSE', 'NRMSE', 'fitness', 'avgLoss')
     '''
+
     plt.figure(figsize = (18,10))
     plt.xlabel('Epoch')
     plt.plot(range(1, num_epoch+1), type_per_epoch) # plot from epoch 1 to epoch n
@@ -121,8 +123,10 @@ def plot_error(type_per_epoch, num_epoch, plot_type):
         plt.show()
     elif plot_type is 'avgLoss':
         plt.title('Average losses vs. epochs')
-        plt.ylabel('RMSE')
+        plt.ylabel('avgLoss')
         # plt.savefig('avgLoss_vs_epochs' + '.eps')
+    else:
+        raise ValueError("Undefined type of error to be plot.")
     plt.show()
 
 # def create_ST_target(randomDNAChem):

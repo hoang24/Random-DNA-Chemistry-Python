@@ -1,5 +1,5 @@
 from simulate_perturbed_chem import plot_concentration, create_influx_lookup
-from readout_utils import load_chem_data, create_trainset, create_testset
+from readout_utils import load_chem_data, create_trainset, create_testset, analyze_error, plot_error
 from readout_layer import ReadOutLayer, train_readout, test_readout
 import torch
 import numpy as np
@@ -68,16 +68,14 @@ for species, concentration in trainset.items():
 train_target = LT_lookup['0 --> U0'][:-t_hold_index]
 num_epoch = 5
 losses = train_readout(readout=readout, trainset=trainset, target=train_target, epochs=num_epoch, device=device)
-avg_losses_per_epoch = []
-for i in range(num_epoch): # list index 0 (epoch 1) to list index 4 (epoch 5)
-    avg_losses_per_epoch.append(np.mean(losses[i]))
-plt.figure(figsize = (18,10))
-plt.title('Plot of losses vs. epochs')
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.plot(range(1, num_epoch+1), avg_losses_per_epoch)
-# plt.savefig('losses_vs_epochs' + '.eps')
-plt.show()
+
+
+# Performance analysis
+RMSE, NRMSE, fitness, avgLoss = analyze_error(losses=losses, num_epoch=num_epoch)
+plot_error(type_per_epoch=RMSE, num_epoch=num_epoch, plot_type='RMSE')
+plot_error(type_per_epoch=NRMSE, num_epoch=num_epoch, plot_type='NRMSE')
+plot_error(type_per_epoch=fitness, num_epoch=num_epoch, plot_type='fitness')
+plot_error(type_per_epoch=avgLoss, num_epoch=num_epoch, plot_type='avgLoss')
 
 
 # Testing

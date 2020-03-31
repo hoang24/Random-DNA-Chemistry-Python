@@ -12,8 +12,8 @@ time_lookup, concentration_lookup, randomDNAChem = load_chem_data()
 
 
 # Plot chemistry
-plot_concentration(time_lookup, concentration_lookup[0])
-plot_concentration(time_lookup, concentration_lookup[1])
+# plot_concentration(time_lookup, concentration_lookup[0])
+# plot_concentration(time_lookup, concentration_lookup[1])
 
 
 # Create trainset and testset
@@ -37,20 +37,20 @@ for r_in, rate_in in ST_lookup.items():
         ST_target_per_reaction.append(rate_in[ir_index - 1] + 2*rate_in[ir_index - 2])
     ST_lookup.update({'{}'.format(r_in): ST_target_per_reaction})
 
-color_array = ['#000000', '#0000FF', '#00FF00', '#00FFFF', '#000080',
-               '#008000', '#008080', '#800000', '#800080', '#808000',
-               '#808080', '#C0C0C0', '#FF0000', '#FF00FF', '#FFFF00',
-               '#8B0000', '#006400', '#BDB76B', '#008B8B', '#191970']
-plt.figure(figsize = (18,10))
-plt.title('Plot of Short Term Memory Task target')
-plt.xlabel('time')
-plt.ylabel('ST memory target')
-for reaction_index, (reaction, ST_target) in enumerate(ST_lookup.items()):
-    plt.plot(time_lookup[2:], ST_target[:-1], color=color_array[reaction_index], label=reaction)
-handles, labels = plt.gca().get_legend_handles_labels()
-by_label = OrderedDict(zip(labels, handles))
-plt.legend(by_label.values(), by_label.keys(), loc='best')
-plt.show()
+# color_array = ['#000000', '#0000FF', '#00FF00', '#00FFFF', '#000080',
+#                '#008000', '#008080', '#800000', '#800080', '#808000',
+#                '#808080', '#C0C0C0', '#FF0000', '#FF00FF', '#FFFF00',
+#                '#8B0000', '#006400', '#BDB76B', '#008B8B', '#191970']
+# plt.figure(figsize = (18,10))
+# plt.title('Plot of Short Term Memory Task target')
+# plt.xlabel('time')
+# plt.ylabel('ST memory target')
+# for reaction_index, (reaction, ST_target) in enumerate(ST_lookup.items()):
+#     plt.plot(time_lookup[2:], ST_target[:-1], color=color_array[reaction_index], label=reaction)
+# handles, labels = plt.gca().get_legend_handles_labels()
+# by_label = OrderedDict(zip(labels, handles))
+# plt.legend(by_label.values(), by_label.keys(), loc='best')
+# plt.show()
 
 for reaction, influx in ST_lookup.items():
     scale_factor = max(influx) / 1 # scale the influx value between 0 and 1
@@ -63,8 +63,9 @@ print('Training model: ')
 for species, concentration in trainset.items():
     trainset.update({'{}'.format(species): concentration[2:]})
 train_target = ST_lookup['0 --> U0'][:-1]
-num_epoch = 5
+num_epoch = 100
 losses = train_readout(readout=readout, trainset=trainset, target=train_target, epochs=num_epoch, device=device)
+
 
 # Performance analysis
 RMSE, NRMSE, fitness, avgLoss = analyze_error(losses=losses, num_epoch=num_epoch)
@@ -72,6 +73,7 @@ plot_error(type_per_epoch=RMSE, num_epoch=num_epoch, plot_type='RMSE')
 plot_error(type_per_epoch=NRMSE, num_epoch=num_epoch, plot_type='NRMSE')
 plot_error(type_per_epoch=fitness, num_epoch=num_epoch, plot_type='fitness')
 plot_error(type_per_epoch=avgLoss, num_epoch=num_epoch, plot_type='avgLoss')
+
 
 # Testing
 print('Testing model: ')
