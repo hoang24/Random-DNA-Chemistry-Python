@@ -1,4 +1,3 @@
-from params import input_params, time_params
 from random_dna_chem import RandomDNAStrandDisplacementCircuit
 from simulate_perturbed_chem import simulate_chem, create_time_concentration_lookup, create_influx_lookup
 from readout_layer import ReadOutLayer, train_readout, test_readout
@@ -7,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def load_chem_data():
+def load_chem_data(input_params, time_params):
     '''
         Load chemistry data and return 2 copies of time array and 2 copies of concentration dictionary
         Returns:
@@ -17,7 +16,7 @@ def load_chem_data():
     '''
 
     print("Generating data ...")
-    randomDNAChem = RandomDNAStrandDisplacementCircuit(input_params=input_params, 
+    randomDNAChem = RandomDNAStrandDisplacementCircuit(input_params=input_params,
                                                        time_params=time_params)
 
     gillespy2_results = simulate_chem(num_trajectories=2, num_time_element=1001, randomDNAChem=randomDNAChem)

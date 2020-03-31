@@ -2,3 +2,6 @@ numpy
 scipy
 matplotlib
 gillespy2
+pandas
+colorama
+termcolor

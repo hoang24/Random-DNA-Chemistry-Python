@@ -1,5 +1,5 @@
 from random_dna_chem import RandomDNAStrandDisplacementCircuit
-from params import input_params, time_params
+from params import input_params1, time_params2
 
 
 class RandomDNAChemDisplay(RandomDNAStrandDisplacementCircuit):
