@@ -31,8 +31,12 @@ def long_term_memory(input_params, time_params, num_epoch):
 
     # Create lookup dictionary for TARGET of long-term memory task
     t_hold = randomDNAChem.time_params['t_hold']
-    t_hold_index = time_lookup.index(t_hold)
-    t_hold_32_index = time_lookup.index(t_hold*(3/2))
+    def find_nearest(array, value):
+        array = np.asarray(array)
+        idx = (np.abs(array - value)).argmin()
+        return array[idx]
+    t_hold_index = time_lookup.index(find_nearest(time_lookup, t_hold))
+    t_hold_32_index = time_lookup.index(find_nearest(time_lookup, t_hold*(3/2)))
     influx_lookup = create_influx_lookup(randomDNAChem=randomDNAChem, num_time_element=1001)
     LT_lookup = influx_lookup.copy() # lookup dict for short term memory task target for all reactions
     for r_in, rate_in in LT_lookup.items():

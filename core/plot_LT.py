@@ -2,8 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-num_epoch = 1
-num_exp = 1
+num_epoch = 10
+num_exp = 10
 
 
 df_NRMSE = pd.read_csv('dat/LT_NRMSE_{}ep_{}ex.csv'.format(num_epoch, num_exp))

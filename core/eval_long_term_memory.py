@@ -23,8 +23,8 @@ fitness_stds = []
 base_influx_list = []
 hold_time_list = []
 
-num_exp = 1
-num_epoch = 1
+num_exp = 10
+num_epoch = 10
 for input_param in input_params:
     for time_param in time_params:
         print(colored('baseIn = {}; thold = {}'.format(input_param['theta_in']['mean'], time_param['t_hold']), 'white', 'on_red'))
