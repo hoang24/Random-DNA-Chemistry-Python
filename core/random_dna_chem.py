@@ -55,7 +55,7 @@ class RandomDNAStrandDisplacementCircuit(object):
                 L (tuple): set of lower single strands
         '''
 
-        nL = int(round(self.input_params['n'] / (1 + self.input_params['p'])))
+        nL = round(self.input_params['n'] / (1 + self.input_params['p']))
         L = []
         for nl in range(nL):
             L.append('L{}'.format(nl))
@@ -71,7 +71,7 @@ class RandomDNAStrandDisplacementCircuit(object):
 
     def _create_species_double(self, nU, nL, U, L):
         '''
-            Method to initialize the set of single DNA strands
+            Method to initialize the set of double DNA strands
             Args:
                 nU (int): number of upper single strands
                 nL (int): number of lower single strands
@@ -85,7 +85,7 @@ class RandomDNAStrandDisplacementCircuit(object):
         '''
 
         min_single = np.min([nL, nU])
-        nF = int(self.input_params['y'] * min_single)
+        nF = int(round(self.input_params['y'] * min_single))
         index_full_list = np.random.choice(a=min_single, size=nF, replace=False)
         F = []
         for index_full in index_full_list:
@@ -97,23 +97,19 @@ class RandomDNAStrandDisplacementCircuit(object):
                                      size=nU)
         self.input_params['phi'].update({'norm_dist': norm_dist})
 
-        num_double_per_upper = []
+        list_double_per_upper = []
         for norm_dist_value in norm_dist:
-            num_double_per_upper.append(int(round(norm_dist_value)))
-        if len(set(num_double_per_upper)) == 1:
-            num_double_per_upper = num_double_per_upper[0] # k (int): number of double strands per upper strands
-        else:
-            raise BaseException
+            list_double_per_upper.append(int(round(norm_dist_value)))
 
         P = F
-        while len(set(F + P)) != len(F + P):
+        while len(set(F + P)) != len(F + P): # repeat selection if lower strand has been selected as complementary strand
             P = []
-            for upper in U: # for each upper strand
-                # Choose randomly number of lower strand counterparts without repetitions
-                lower_per_upper = np.random.choice(a=L, size=num_double_per_upper, replace=False)
-                for lower in lower_per_upper:
-                    partial = upper + lower
-                    P.append(partial)
+            for u_idx, u in enumerate(U): # for each upper strand
+                # Choose randomly number of lower strand counterparts without repetitions                
+                lower_per_upper = np.random.choice(a=L, size=list_double_per_upper[u_idx], replace=False)
+                for l in lower_per_upper:
+                    p = u + l
+                    P.append(p)
         nP = len(P)
         F = tuple(F)
         P = tuple(P)
@@ -224,14 +220,14 @@ class RandomDNAStrandDisplacementCircuit(object):
         '''
 
         order_lookup = {}
-        for p_index in range(self.species_lookup['nP']):
+        for p_idx in range(self.species_lookup['nP']):
             partial_with_order = np.random.choice(a=self.species_lookup['P'])
             while partial_with_order in order_lookup.values():
                 partial_with_order = np.random.choice(a=self.species_lookup['P'])
-            order_lookup.update({p_index: partial_with_order})
+            order_lookup.update({p_idx: partial_with_order})
 
-        for f_index, f in enumerate(self.species_lookup['F']):
-            order_lookup.update({self.species_lookup['nP'] + f_index: f})
+        for f_idx, f in enumerate(self.species_lookup['F']):
+            order_lookup.update({self.species_lookup['nP'] + f_idx: f})
 
         return order_lookup
 
@@ -431,20 +427,20 @@ class RandomDNAStrandDisplacementCircuit(object):
         ic_U, ic_L, ic_F, ic_P = self._create_initial_concentration()
 
         conU = {}
-        for u_index, u in enumerate(self.species_lookup.get('U')):
-            conU.update({'{}'.format(u): [ic_U[u_index]]})
+        for u_idx, u in enumerate(self.species_lookup.get('U')):
+            conU.update({'{}'.format(u): [ic_U[u_idx]]})
 
         conL = {}
-        for l_index, l in enumerate(self.species_lookup.get('L')):
-            conL.update({'{}'.format(l): [ic_L[l_index]]})
+        for l_idx, l in enumerate(self.species_lookup.get('L')):
+            conL.update({'{}'.format(l): [ic_L[l_idx]]})
 
         conF = {}
-        for f_index, f in enumerate(self.species_lookup.get('F')):
-            conF.update({'{}'.format(f): [ic_F[f_index]]})
+        for f_idx, f in enumerate(self.species_lookup.get('F')):
+            conF.update({'{}'.format(f): [ic_F[f_idx]]})
 
         conP = {}
-        for p_index, p in enumerate(self.species_lookup.get('P')):
-            conP.update({'{}'.format(p): [ic_P[p_index]]})
+        for p_idx, p in enumerate(self.species_lookup.get('P')):
+            conP.update({'{}'.format(p): [ic_P[p_idx]]})
 
         concentration_lookup = {
             'conU': conU,

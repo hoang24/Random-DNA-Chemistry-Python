@@ -3,7 +3,7 @@
 '''
 
 input_params1 = {
-    'V': 1e-6, # Volume of the chamber containing the chemistry
+    # 'V': 1e-6, # Volume of the chamber containing the chemistry
     'n': 7, # Number of single strands [5, 10)
     'p': 3/4, # ratio of upper to lower strands [0.5, 1)
     'y': 1/3, # ratio of upper strands with complements [0, 1)
@@ -36,7 +36,7 @@ time_params1 = {
 
 
 input_params2 = {
-    'V': 1e-6, # Volume of the chamber containing the chemistry
+    # 'V': 1e-6, # Volume of the chamber containing the chemistry
     'n': 7, # Number of single strands [5, 10)
     'p': 3/4, # ratio of upper to lower strands [0.5, 1)
     'y': 1/3, # ratio of upper strands with complements [0, 1)
@@ -69,7 +69,7 @@ time_params2 = {
 
 
 input_params3 = {
-    'V': 1e-6, # Volume of the chamber containing the chemistry
+    # 'V': 1e-6, # Volume of the chamber containing the chemistry
     'n': 7, # Number of single strands [5, 10)
     'p': 3/4, # ratio of upper to lower strands [0.5, 1)
     'y': 1/3, # ratio of upper strands with complements [0, 1)
@@ -102,7 +102,7 @@ time_params3 = {
 
 
 input_params4 = {
-    'V': 1e-6, # Volume of the chamber containing the chemistry
+    # 'V': 1e-6, # Volume of the chamber containing the chemistry
     'n': 7, # Number of single strands [5, 10)
     'p': 3/4, # ratio of upper to lower strands [0.5, 1)
     'y': 1/3, # ratio of upper strands with complements [0, 1)
@@ -135,7 +135,7 @@ time_params4 = {
 
 
 input_params5 = {
-    'V': 1e-6, # Volume of the chamber containing the chemistry
+    # 'V': 1e-6, # Volume of the chamber containing the chemistry
     'n': 7, # Number of single strands [5, 10)
     'p': 3/4, # ratio of upper to lower strands [0.5, 1)
     'y': 1/3, # ratio of upper strands with complements [0, 1)
@@ -168,7 +168,7 @@ time_params5 = {
 
 
 input_params6 = {
-    'V': 1e-6, # Volume of the chamber containing the chemistry
+    # 'V': 1e-6, # Volume of the chamber containing the chemistry
     'n': 7, # Number of single strands [5, 10)
     'p': 3/4, # ratio of upper to lower strands [0.5, 1)
     'y': 1/3, # ratio of upper strands with complements [0, 1)

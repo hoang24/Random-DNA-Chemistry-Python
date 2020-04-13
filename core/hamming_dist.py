@@ -36,6 +36,9 @@ def hamming_dist(input_params, time_params, num_epoch):
         scale_factor = max(influx) / 1 # scale the influx value between 0 and 1
         for i in range(len(influx)):
             influx_lookup[reaction][i] = influx[i] / scale_factor
+    influx_list = []
+    for val in influx_lookup.values():
+        influx_list.append(val)
 
 
     def hamming_distance(s1, s2):
@@ -55,7 +58,7 @@ def hamming_dist(input_params, time_params, num_epoch):
 
     # Training
     print('Training model: ')
-    train_target, hamm_dist = hamming_distance(influx_lookup['0 --> U0'], influx_lookup['0 --> L0'])
+    train_target, hamm_dist = hamming_distance(influx_list[0], influx_list[1])
     losses = train_readout(readout=readout, trainset=trainset, target=train_target, epochs=num_epoch, device=device)
 
 
@@ -69,7 +72,7 @@ def hamming_dist(input_params, time_params, num_epoch):
 
     # Testing
     print('Testing model: ')
-    test_target, hamm_dist = hamming_distance(influx_lookup['0 --> U0'], influx_lookup['0 --> L0'])
+    test_target, hamm_dist = hamming_distance(influx_list[0], influx_list[1])
     final_accuracy = test_readout(readout=readout, testset=testset, target=test_target, device=device)
 
 

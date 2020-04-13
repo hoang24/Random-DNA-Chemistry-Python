@@ -1,5 +1,5 @@
 from random_dna_chem import RandomDNAStrandDisplacementCircuit
-from params import input_params1, time_params2
+from params import input_params5, time_params1
 
 
 class RandomDNAChemDisplay(RandomDNAStrandDisplacementCircuit):
@@ -7,7 +7,7 @@ class RandomDNAChemDisplay(RandomDNAStrandDisplacementCircuit):
         Class to display the attributes of the random DNA strand displacement circuit
     '''
 
-    def __init__(self):
+    def __init__(self, input_params, time_params):
         '''
             Init method to run the parent class (RandomDNAStrandDisplacementCircuit)
         '''
@@ -130,7 +130,7 @@ class RandomDNAChemDisplay(RandomDNAStrandDisplacementCircuit):
             print('\n')
 
 if __name__ == '__main__':
-    randomDNAChem = RandomDNAChemDisplay()
+    randomDNAChem = RandomDNAChemDisplay(input_params=input_params5, time_params=time_params1)
     randomDNAChem.display_species()
     randomDNAChem.display_reactions()
     randomDNAChem.display_species_concentration()
