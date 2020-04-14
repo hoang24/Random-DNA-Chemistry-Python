@@ -106,7 +106,10 @@ class RandomDNAStrandDisplacementCircuit(object):
             P = []
             for u_idx, u in enumerate(U): # for each upper strand
                 # Choose randomly number of lower strand counterparts without repetitions                
-                lower_per_upper = np.random.choice(a=L, size=list_double_per_upper[u_idx], replace=False)
+                try:
+                    lower_per_upper = np.random.choice(a=L, size=list_double_per_upper[u_idx], replace=False)
+                except:
+                    import pdb; pdb.set_trace()  # breakpoint d3108fb9 //
                 for l in lower_per_upper:
                     p = u + l
                     P.append(p)

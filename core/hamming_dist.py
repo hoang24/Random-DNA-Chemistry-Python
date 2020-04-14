@@ -8,6 +8,17 @@ from collections import OrderedDict
 
 
 def hamming_dist(input_params, time_params, num_epoch):
+    '''
+        Method to calculate the Hamming distance between 2 input bitstream
+        Args: 
+            input_params (dict): dictionary of input parameters 
+            time_params (dict): dictionary of time parameters
+            num_epoch (int): number of epoch
+        Returns:
+            NRMSE_per_epoch[-1] (numpy.float64): NRMSE of the final epoch 
+            fitness_per_epoch[-1] (numpy.float64): fitness of the final epoch 
+    '''
+
     # Load data from chemistry
     time_lookup, concentration_lookup, randomDNAChem = load_chem_data(input_params, time_params)
 
