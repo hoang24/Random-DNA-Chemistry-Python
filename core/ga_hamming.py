@@ -13,8 +13,13 @@ Genetic algorithm parameters:
     Mating pool size (number of parents mating)
     Population size (solution per population)
 """
-mate_pool_size = 2
-sol_per_pop = 4
+sol_per_pop = 32
+mate_pool_size = sol_per_pop / 2
+if (mate_pool_size % 2) != 0:
+    mate_pool_size = np.floor(mate_pool_size + 1)
+mate_pool_size = int(mate_pool_size)
+print(mate_pool_size)
+
 population_list = []
 population_dict = []
 for sol in range(sol_per_pop):
@@ -136,7 +141,7 @@ def mutation(offsprings):
         # The random value to be added to the gene.
         rand_param_idx = np.random.choice(a=offsprings.shape[1])
         if rand_param_idx is 0:
-            rand_val = round(np.random.uniform(-1.0, 1.0))
+            rand_val = int(np.random.choice(a=[-1,1]))
         elif rand_param_idx is 1:
             rand_val = np.random.uniform(-0.1, 0.1)
         elif rand_param_idx is 2:
@@ -152,7 +157,7 @@ def mutation(offsprings):
         elif rand_param_idx is 7:
             rand_val = np.random.uniform(-0.0001, 0.0001)
         elif rand_param_idx is 8:
-            rand_val = np.random.uniform(-0.5, 0.5)
+            rand_val = np.random.uniform(-0.1, 0.1)
         elif rand_param_idx is 9:
             rand_val = np.random.uniform(-0.05, 0.05)
         else:
@@ -161,7 +166,7 @@ def mutation(offsprings):
     return offsprings
 
 
-num_gen = 1
+num_gen = 2
 for gen in range(num_gen): # 
     print(colored('Generation: {}'.format(gen), 'white', 'on_blue'))
     
@@ -177,19 +182,35 @@ for gen in range(num_gen): #
     p_m = 0.5 # mutation probability
     if np.random.uniform(0,1) < p_c: # crossover
         offspring_size = (pop_size[0] - parents.shape[0], population_list.shape[1])
-        offsprings = crossover(parents=parents, num_offsprings=offspring_size)    
+        offsprings = crossover(parents=parents, offspring_size=offspring_size)    
         if np.random.uniform(0,1) < p_m/p_c: # mutation
             offsprings = mutation(offsprings=offsprings)
         population_list[parents.shape[0]:, :] = offsprings
 
     print("Best result: ", best_result)
-    population_dict = get_params_dict(population_list)
+
+    # update population dictionary
+    for pop_idx in range(population_list.shape[0]):
+        population_dict[pop_idx] = get_params_dict(population_list[pop_idx])
 
 # Getting the best solution after iterating finishing all generations.
 # Calculate fitness for final generation
 NRMSE_means_per_sol = get_error_fitness(population_dict)
 # Then return the index of that solution corresponding to the best fitness.
 best_match_idx = np.where(NRMSE_means_per_sol == np.min(NRMSE_means_per_sol))
+best_match_idx = best_match_idx[0][0]
 
-print("Best solution: ", population_list[best_match_idx, :])
-print("Best fitness (lowest NRMSE): ", NRMSE_means_per_sol[best_match_idx])
+print(colored('Best solution: ', 'red', 'on_white'))
+print('n = ', population_list[best_match_idx, 0])
+print('p = ', population_list[best_match_idx, 1])
+print('y = ', population_list[best_match_idx, 2])
+print('a_in = ', 2/population_list[best_match_idx, 0])
+print('a_out = ', population_list[best_match_idx, 3])
+print('theta[mean] = ', population_list[best_match_idx, 4])
+print('theta[variance] = ', population_list[best_match_idx, 5])
+print('theta_in = ', population_list[best_match_idx, 6])
+print('theta_out = ', population_list[best_match_idx, 7])
+print('phi[mean] = ', population_list[best_match_idx, 8])
+print('phi[variance] = ', population_list[best_match_idx, 9])
+
+print("Best fitness (lowest NRMSE for Hamming distance task): ", NRMSE_means_per_sol[best_match_idx])

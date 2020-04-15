@@ -26,7 +26,7 @@ import numpy as np
 '''
 
 def initialize_params_list():
-    n = int(np.round(np.random.uniform(low=5, high=10))) # 0
+    n = int(np.random.choice(a=range(5, 10+1))) # 0
     p = np.random.uniform(low=0.5, high=1) # 1
     y = np.random.uniform(low=0, high=1) # 2
     a_in = 2/n # hamming distance case
@@ -36,7 +36,13 @@ def initialize_params_list():
     theta_var = np.random.uniform(low=0, high=0.02) # 5
     theta_in = np.random.uniform(low=0, high=0.0006) # 6
     theta_out = np.random.uniform(low=0, high=0.0006) # 7
-    phi_mean = np.random.uniform(low=0, high=4) # 8
+
+    nL = int(round(n / (1 + p)))
+    nU = n-nL
+    min_single = np.min([nL, nU])
+    nF = int(round(y * min_single))
+
+    phi_mean = np.random.uniform(low=0, high=nL-nF) # 8
     phi_var = np.random.uniform(low=0, high=0.5) # 9
 
     # 10 params to optimize

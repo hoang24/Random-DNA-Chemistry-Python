@@ -55,13 +55,13 @@ class RandomDNAStrandDisplacementCircuit(object):
                 L (tuple): set of lower single strands
         '''
 
-        nL = round(self.input_params['n'] / (1 + self.input_params['p']))
+        nL = int(round(self.input_params['n'] / (1 + self.input_params['p'])))
         L = []
         for nl in range(nL):
             L.append('L{}'.format(nl))
         L = tuple(L)
 
-        nU = self.input_params['n'] - nL
+        nU = int(self.input_params['n'] - nL)
         U = []
         for nu in range(nU):
             U.append('U{}'.format(nu))
@@ -101,10 +101,6 @@ class RandomDNAStrandDisplacementCircuit(object):
         for norm_dist_value in norm_dist:
             list_double_per_upper.append(int(round(norm_dist_value)))
 
-        for idx in range(len(list_double_per_upper)):
-            if list_double_per_upper[idx] > nL:
-                list_double_per_upper[idx] = nL
-
         P = F
         while len(set(F + P)) != len(F + P): # repeat selection if lower strand has been selected as complementary strand
             P = []
@@ -114,6 +110,7 @@ class RandomDNAStrandDisplacementCircuit(object):
                 for l in lower_per_upper:
                     p = u + l
                     P.append(p)
+
         nP = len(P)
         F = tuple(F)
         P = tuple(P)
