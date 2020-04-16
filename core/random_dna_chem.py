@@ -95,21 +95,28 @@ class RandomDNAStrandDisplacementCircuit(object):
         norm_dist = np.random.normal(loc=self.input_params['phi']['mean'], 
                                      scale=self.input_params['phi']['variance'],
                                      size=nU)
+        norm_dist = np.abs(norm_dist)
         self.input_params['phi'].update({'norm_dist': norm_dist})
 
         list_double_per_upper = []
         for norm_dist_value in norm_dist:
             list_double_per_upper.append(int(round(norm_dist_value)))
 
+        count = 0
         P = F
         while len(set(F + P)) != len(F + P): # repeat selection if lower strand has been selected as complementary strand
             P = []
             for u_idx, u in enumerate(U): # for each upper strand
-                # Choose randomly number of lower strand counterparts without repetitions                
+                # Choose randomly number of lower strand counterparts without repetitions
                 lower_per_upper = np.random.choice(a=L, size=list_double_per_upper[u_idx], replace=False)
                 for l in lower_per_upper:
                     p = u + l
                     P.append(p)
+
+            count += 1
+            if count >= 10000:
+                print('too long')
+                import pdb; pdb.set_trace()  # breakpoint 79afa978 //
 
         nP = len(P)
         F = tuple(F)
@@ -464,6 +471,7 @@ class RandomDNAStrandDisplacementCircuit(object):
         norm_dist_bind = np.random.normal(loc=self.input_params['theta']['mean'], 
                                           scale=np.sqrt(self.input_params['theta']['variance']),
                                           size=nR_BIND)
+        norm_dist_bind = np.abs(norm_dist_bind)
         self.input_params['theta'].update({'norm_dist_bind': norm_dist_bind})
         k_BIND = []
         for norm_dist_bind_value in norm_dist_bind:
@@ -484,6 +492,7 @@ class RandomDNAStrandDisplacementCircuit(object):
         norm_dist_displace = np.random.normal(loc=self.input_params['theta']['mean'], 
                                               scale=np.sqrt(self.input_params['theta']['variance']),
                                               size=nR_DISPLACE)
+        norm_dist_displace = np.abs(norm_dist_displace)
         self.input_params['theta'].update({'norm_dist_displace': norm_dist_displace})
         k_DISPLACE = []
         for norm_dist_displace_value in norm_dist_displace:
@@ -504,6 +513,7 @@ class RandomDNAStrandDisplacementCircuit(object):
         norm_dist_in = np.random.normal(loc=self.input_params['theta_in']['mean'], 
                                         scale=np.sqrt(self.input_params['theta_in']['variance']),
                                         size=nR_IN)
+        norm_dist_in = np.abs(norm_dist_in)
         self.input_params['theta_in'].update({'norm_dist_in': norm_dist_in})
         k_IN = []
         for norm_dist_in_value in norm_dist_in:
@@ -524,6 +534,7 @@ class RandomDNAStrandDisplacementCircuit(object):
         norm_dist_out = np.random.normal(loc=self.input_params['theta_out']['mean'], 
                                          scale=np.sqrt(self.input_params['theta_out']['variance']),
                                          size=nR_OUT)
+        norm_dist_out = np.abs(norm_dist_out)
         self.input_params['theta_out'].update({'norm_dist_out': norm_dist_out})
         k_OUT = []
         for norm_dist_out_value in norm_dist_out:

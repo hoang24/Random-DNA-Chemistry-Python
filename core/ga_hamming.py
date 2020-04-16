@@ -13,7 +13,7 @@ Genetic algorithm parameters:
     Mating pool size (number of parents mating)
     Population size (solution per population)
 """
-sol_per_pop = 32
+sol_per_pop = 8
 mate_pool_size = sol_per_pop / 2
 if (mate_pool_size % 2) != 0:
     mate_pool_size = np.floor(mate_pool_size + 1)
@@ -89,7 +89,10 @@ def select_mating_pool(population, error, num_parents):
     parents = np.empty((num_parents, population.shape[1]))
     for parent_num in range(num_parents):
         min_error_idx = np.where(error == np.min(error))
-        min_error_idx = min_error_idx[0][0]
+        try:
+            min_error_idx = min_error_idx[0][0]
+        except Exception as exc:
+            import pdb; pdb.set_trace()  # breakpoint 58914c59x //
         if parent_num is 0:
             best_result = population[min_error_idx, :]
         parents[parent_num, :] = population[min_error_idx, :]
