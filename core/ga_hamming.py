@@ -13,12 +13,11 @@ Genetic algorithm parameters:
     Mating pool size (number of parents mating)
     Population size (solution per population)
 """
-sol_per_pop = 8
+sol_per_pop = 32
 mate_pool_size = sol_per_pop / 2
 if (mate_pool_size % 2) != 0:
     mate_pool_size = np.floor(mate_pool_size + 1)
 mate_pool_size = int(mate_pool_size)
-print(mate_pool_size)
 
 population_list = []
 population_dict = []
@@ -31,7 +30,7 @@ population_list = np.array(population_list)
 pop_size = population_list.shape # shape[0]: sol_per_pop (8), shape[1]: number of params (10)
 
 
-def eval_hamming(num_exp, num_epoch, input_params):
+def eval_hamming(num_exp, num_epoch, input_params, time_params):
     '''
         Method to evaluate Hamming distance for GA
         Args:
@@ -43,12 +42,10 @@ def eval_hamming(num_exp, num_epoch, input_params):
             NRMSE_std (numpy.float64): standard deviation of NRMSE over number of experiments
     '''
 
-    print(colored('baseIn = {}; thold = {}'
-        .format(input_params['theta_in']['mean'], time_params1['t_hold']), 'white', 'on_red'))
     NRMSE_per_exp = []
     for exp in range(num_exp):
         print(colored('Exp #{}'.format(exp+1), 'white', 'on_green'))
-        NRMSE, __ = hamming_dist(input_params=input_params, time_params=time_params1, num_epoch=num_epoch)
+        NRMSE, __ = hamming_dist(input_params=input_params, time_params=time_params, num_epoch=num_epoch)
         NRMSE_per_exp.append(NRMSE)
     NRMSE_mean = np.mean(NRMSE_per_exp)
     NRMSE_std = np.std(NRMSE_per_exp)
@@ -66,8 +63,10 @@ def get_error_fitness(population_dict):
     '''
 
     NRMSE_means_per_sol = []
-    for sol in population_dict:
-        NRMSE_means, __ = eval_hamming(num_exp=1, num_epoch=1, input_params=sol)
+    for sol_idx, sol in enumerate(population_dict):
+        print(colored('Chromosome #{}: baseIn = {}, thold = {}'
+            .format(sol_idx, sol['theta_in']['mean'], time_params1['t_hold']), 'white', 'on_red'))
+        NRMSE_means, __ = eval_hamming(num_exp=1, num_epoch=1, input_params=sol, time_params=time_params1)
         NRMSE_means_per_sol.append(NRMSE_means)
     return NRMSE_means_per_sol
 
@@ -86,13 +85,13 @@ def select_mating_pool(population, error, num_parents):
                 best_result.shape = (1, number of params)
     '''
 
+    for e_idx in range(len(error)): # make nan NRMSE to inf so not get selected
+        if np.isnan(error[e_idx]):
+            error[e_idx] = np.inf
     parents = np.empty((num_parents, population.shape[1]))
     for parent_num in range(num_parents):
         min_error_idx = np.where(error == np.min(error))
-        try:
-            min_error_idx = min_error_idx[0][0]
-        except Exception as exc:
-            import pdb; pdb.set_trace()  # breakpoint 58914c59x //
+        min_error_idx = min_error_idx[0][0]
         if parent_num is 0:
             best_result = population[min_error_idx, :]
         parents[parent_num, :] = population[min_error_idx, :]
@@ -144,32 +143,32 @@ def mutation(offsprings):
         # The random value to be added to the gene.
         rand_param_idx = np.random.choice(a=offsprings.shape[1])
         if rand_param_idx is 0:
-            rand_val = int(np.random.choice(a=[-1,1]))
+            rand_val = int(np.random.choice(a=range(5, 10))) # 0
         elif rand_param_idx is 1:
-            rand_val = np.random.uniform(-0.1, 0.1)
+            rand_val = np.random.uniform(low=0.5, high=1) # 1
         elif rand_param_idx is 2:
-            rand_val = np.random.uniform(-0.1, 0.1)
+            rand_val = np.random.uniform(low=0, high=1) # 2
         elif rand_param_idx is 3:
-            rand_val = np.random.uniform(-0.1, 0.1)
+            rand_val = np.random.uniform(low=0, high=1) # 3
         elif rand_param_idx is 4:
-            rand_val = np.random.uniform(-0.01, 0.01)
+            rand_val = np.random.uniform(low=0.05, high=0.2) # 4
         elif rand_param_idx is 5:
-            rand_val = np.random.uniform(-0.001, 0.001)
+            rand_val = np.random.uniform(low=0, high=0.02) # 5
         elif rand_param_idx is 6:
-            rand_val = np.random.uniform(-0.0001, 0.0001)
+            rand_val = np.random.uniform(low=0, high=0.0006) # 6
         elif rand_param_idx is 7:
-            rand_val = np.random.uniform(-0.0001, 0.0001)
+            rand_val = np.random.uniform(low=0, high=0.0006) # 7
         elif rand_param_idx is 8:
-            rand_val = np.random.uniform(-0.1, 0.1)
+            rand_val = np.random.uniform(low=0, high=4) # 8
         elif rand_param_idx is 9:
-            rand_val = np.random.uniform(-0.05, 0.05)
+            rand_val = np.random.uniform(low=0, high=0.5) # 9
         else:
             raise BaseException
-        offsprings[idx, rand_param_idx] = offsprings[idx, rand_param_idx] + rand_val
+        offsprings[idx, rand_param_idx] = rand_val
     return offsprings
 
 
-num_gen = 2
+num_gen = 5
 for gen in range(num_gen): # 
     print(colored('Generation: {}'.format(gen), 'white', 'on_blue'))
     

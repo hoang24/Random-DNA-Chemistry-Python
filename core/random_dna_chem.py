@@ -102,8 +102,12 @@ class RandomDNAStrandDisplacementCircuit(object):
         for norm_dist_value in norm_dist:
             list_double_per_upper.append(int(round(norm_dist_value)))
 
-        count = 0
+        for dpu_idx in range(len(list_double_per_upper)):
+            if dpu_idx > nL:
+                list_double_per_upper[dpu_idx] = nL
+
         P = F
+        count = 0
         while len(set(F + P)) != len(F + P): # repeat selection if lower strand has been selected as complementary strand
             P = []
             for u_idx, u in enumerate(U): # for each upper strand
@@ -112,11 +116,14 @@ class RandomDNAStrandDisplacementCircuit(object):
                 for l in lower_per_upper:
                     p = u + l
                     P.append(p)
-
             count += 1
             if count >= 10000:
-                print('too long')
-                import pdb; pdb.set_trace()  # breakpoint 79afa978 //
+                break
+
+        # Omit lower strand from selection if it has already been selected as complementary
+        for f_idx in F:
+            if f_idx in P:
+                P.pop(P.index(f_idx))
 
         nP = len(P)
         F = tuple(F)
