@@ -55,10 +55,7 @@ def train_readout(readout, trainset, target, epochs, device):
             y_hat = [target[i]] # target at a particular time i
             x_matrix_i = [] # vertical vector contains each species concentration at time i
             for species_index in range(len(trainset)):
-                try:
-                    x_matrix_i.append(x_matrix[species_index][i])
-                except Exception as exc:
-                    import pdb; pdb.set_trace()  # breakpoint 08871695x //
+                x_matrix_i.append(x_matrix[species_index][i])
             x = torch.Tensor(x_matrix_i)
             y = torch.Tensor(y_hat)
 
