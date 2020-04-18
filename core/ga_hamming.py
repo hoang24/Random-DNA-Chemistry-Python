@@ -66,7 +66,7 @@ def get_error_fitness(population_dict):
     for sol_idx, sol in enumerate(population_dict):
         print(colored('Chromosome #{}: baseIn = {}, thold = {}'
             .format(sol_idx, sol['theta_in']['mean'], time_params1['t_hold']), 'white', 'on_red'))
-        NRMSE_means, __ = eval_hamming(num_exp=1, num_epoch=1, input_params=sol, time_params=time_params1)
+        NRMSE_means, __ = eval_hamming(num_exp=10, num_epoch=10, input_params=sol, time_params=time_params1)
         NRMSE_means_per_sol.append(NRMSE_means)
     return NRMSE_means_per_sol
 
@@ -168,7 +168,7 @@ def mutation(offsprings):
     return offsprings
 
 
-num_gen = 5
+num_gen = 10
 for gen in range(num_gen): # 
     print(colored('Generation: {}'.format(gen), 'white', 'on_blue'))
     
