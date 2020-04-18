@@ -24,7 +24,7 @@ class RandomDNAChemPerturbationGillespy2(gillespy2.Model):
                 previous_gillespy2_result (obj): gillespy2 result after run from the previous period
         '''
 
-        super().__init__(self)
+        super().__init__(self, volume=1.0)
         self.randomDNAChem = non_gillespy2_chem
         self.rate_in_timeIndex = rate_in_timeIndex
         self.period_start = period_start
