@@ -168,7 +168,7 @@ def mutation(offsprings):
     return offsprings
 
 
-num_gen = 10
+num_gen = 50
 for gen in range(num_gen): # 
     print(colored('Generation: {}'.format(gen), 'white', 'on_blue'))
     
