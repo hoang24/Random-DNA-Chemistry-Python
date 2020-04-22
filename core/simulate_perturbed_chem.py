@@ -99,13 +99,14 @@ def create_influx_lookup (randomDNAChem, num_time_element):
 
     return influx_lookup
 
-def plot_concentration (time_lookup, concentration_lookup):
+def plot_concentration (time_lookup, concentration_lookup, show_title):
     '''
         Method to plot concentration over time for a particular Gillespy2 trajectory
         Args:
             time_lookup (list): time array from 0 to end of simulation time
             concentration_lookup (dict): dictionary of concentration over time for each species 
                 {'species': [concentration (list)]}
+            show_title (bool): True: display the title; False: not display the title
     '''
 
     color_array = ['#000000', '#0000FF', '#00FF00', '#00FFFF', '#000080',
@@ -113,10 +114,11 @@ def plot_concentration (time_lookup, concentration_lookup):
                    '#808080', '#C0C0C0', '#FF0000', '#FF00FF', '#FFFF00',
                    '#8B0000', '#006400', '#BDB76B', '#008B8B', '#191970']
 
-    plt.figure(figsize = (18,10))
-    plt.title('Concentration of all species')
-    plt.xlabel('time')
-    plt.ylabel('concentration')
+    plt.figure()
+    if show_title:
+        plt.title('Stochastic simulation of Random DNA Strand Displacement Circuit', fontsize=15)
+    plt.xlabel('time (s)', fontsize=15)
+    plt.ylabel('Number of species', fontsize=15)
 
     for species_index, (species, concentration) in enumerate(concentration_lookup.items()):
         plt.plot(time_lookup, concentration, color=color_array[species_index], label=species)

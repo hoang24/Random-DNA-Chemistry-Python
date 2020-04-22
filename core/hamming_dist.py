@@ -24,9 +24,8 @@ def hamming_dist(input_params, time_params, num_epoch):
 
 
     # Plot chemistry
-    # plot_concentration(time_lookup, concentration_lookup[0])
-    # plot_concentration(time_lookup, concentration_lookup[1])
-
+    # plot_concentration(time_lookup=time_lookup, concentration_lookup=concentration_lookup[0], show_title=False)
+    # plot_concentration(time_lookup=time_lookup, concentration_lookup=concentration_lookup[1], show_title=False)
 
     # Create trainset and testset
     trainset = create_trainset(concentration_lookup=concentration_lookup)

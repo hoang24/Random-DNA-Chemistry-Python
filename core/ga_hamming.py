@@ -199,6 +199,9 @@ for gen in range(num_gen): #
 # Calculate fitness for final generation
 NRMSE_means_per_sol = get_error_fitness(population_dict)
 # Then return the index of that solution corresponding to the best fitness.
+for e_idx in range(len(NRMSE_means_per_sol)): # make nan NRMSE to inf so not get selected
+    if np.isnan(NRMSE_means_per_sol[e_idx]):
+        NRMSE_means_per_sol[e_idx] = np.inf
 best_match_idx = np.where(NRMSE_means_per_sol == np.min(NRMSE_means_per_sol))
 best_match_idx = best_match_idx[0][0]
 
