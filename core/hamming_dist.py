@@ -7,13 +7,14 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 
 
-def hamming_dist(input_params, time_params, num_epoch):
+def hamming_dist(input_params, time_params, num_epoch, plot_chem=False):
     '''
         Method to calculate the Hamming distance between 2 input bitstream
         Args: 
             input_params (dict): dictionary of input parameters 
             time_params (dict): dictionary of time parameters
             num_epoch (int): number of epoch
+            plot_chem (bool): whether to generate the concentration plots
         Returns:
             NRMSE_per_epoch[-1] (numpy.float64): NRMSE of the final epoch 
             fitness_per_epoch[-1] (numpy.float64): fitness of the final epoch 
@@ -24,8 +25,9 @@ def hamming_dist(input_params, time_params, num_epoch):
 
 
     # Plot chemistry
-    # plot_concentration(time_lookup=time_lookup, concentration_lookup=concentration_lookup[0], show_title=False)
-    # plot_concentration(time_lookup=time_lookup, concentration_lookup=concentration_lookup[1], show_title=False)
+    if plot_chem:
+        plot_concentration(time_lookup=time_lookup, concentration_lookup=concentration_lookup[0], show_title=False)
+        plot_concentration(time_lookup=time_lookup, concentration_lookup=concentration_lookup[1], show_title=False)
 
     # Create trainset and testset
     trainset = create_trainset(concentration_lookup=concentration_lookup)

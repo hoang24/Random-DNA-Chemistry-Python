@@ -114,25 +114,32 @@ def plot_concentration (time_lookup, concentration_lookup, show_title):
                    '#808080', '#C0C0C0', '#FF0000', '#FF00FF', '#FFFF00',
                    '#8B0000', '#006400', '#BDB76B', '#008B8B', '#191970']
 
-    plt.figure()
+    plt.rc('font', family='serif')
+    plt.rc('xtick', labelsize='x-small')
+    plt.rc('ytick', labelsize='x-small')
+
+    fig = plt.figure(figsize=(4, 3))
+    ax = fig.add_subplot(1, 1, 1)
     if show_title:
-        plt.title('Stochastic simulation of Random DNA Strand Displacement Circuit', fontsize=15)
-    plt.xlabel('time (s)', fontsize=15)
-    plt.ylabel('Number of species', fontsize=15)
+        plt.title('Stochastic simulation of Random DNA Strand Displacement Circuit', fontsize=5)
+    ax.set_xlabel('time (s)')
+    ax.set_ylabel('Number of molecules')
+    plt.tight_layout()
 
     for species_index, (species, concentration) in enumerate(concentration_lookup.items()):
         plt.plot(time_lookup, concentration, color=color_array[species_index], label=species)
 
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = OrderedDict(zip(labels, handles))
-    plt.legend(by_label.values(), by_label.keys(), loc='best')
+    ax.legend(by_label.values(), by_label.keys(), loc='best', fontsize=5, ncol=2, handlelength=1.0)
 
-    # plot_name = 'random_dna_chem_plot_test'
+    plot_name = 'species_plot_5baseIn_1tHold'
     try:
         plot_name
     except NameError:
         plt.show()
     else:
+        plt.savefig('plots/' + plot_name + '.png')
         plt.savefig('plots/' + plot_name + '.eps')
 
 def plot_influx (time_lookup, influx_lookup):
