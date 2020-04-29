@@ -1,9 +1,9 @@
-from params import input_params1, time_params1
-from params import input_params2, time_params2
-from params import input_params3, time_params3
-from params import input_params4, time_params4
-from params import input_params5, time_params5
-from params import input_params6, time_params6
+from time_series_params import input_params1, time_params1
+from time_series_params import input_params2, time_params2
+from time_series_params import input_params3, time_params3
+from time_series_params import input_params4, time_params4
+from time_series_params import input_params5, time_params5
+from time_series_params import input_params6, time_params6
 from short_term_memory import short_term_memory
 import numpy as np
 import matplotlib.pyplot as plt

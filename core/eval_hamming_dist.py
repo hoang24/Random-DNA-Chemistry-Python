@@ -1,9 +1,9 @@
-from params import input_params1, time_params1
-from params import input_params2, time_params2
-from params import input_params3, time_params3
-from params import input_params4, time_params4
-from params import input_params5, time_params5
-from params import input_params6, time_params6
+from hamming_params import input_params1, time_params1
+from hamming_params import input_params2, time_params2
+from hamming_params import input_params3, time_params3
+from hamming_params import input_params4, time_params4
+from hamming_params import input_params5, time_params5
+from hamming_params import input_params6, time_params6
 from hamming_dist import hamming_dist
 import numpy as np
 import matplotlib.pyplot as plt
