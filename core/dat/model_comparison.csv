@@ -1,0 +1,7 @@
+CRN Model,Task,NRMSE_mean,NRMSE_stds
+"Goudarzi, 2013",Short-term Memory Task,0.24,0.05
+"Goudarzi, 2013",Long-term Memory Task,0.12,0.025
+"Yahiro, 2018",Short-term Memory Task,0.17,0.025
+"Yahiro, 2018",Long-term Memory Task,0.18,0.026
+Our model,Short-term Memory Task,0.055,0.025
+Our model,Long-term Memory Task,0.05,0.0125
