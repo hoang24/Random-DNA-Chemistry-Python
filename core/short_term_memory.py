@@ -57,13 +57,16 @@ def short_term_memory(input_params, time_params, num_epoch):
         scale_factor = max(influx) / 1 # scale the influx value between 0 and 1
         for i in range(len(influx)):
             ST_lookup[reaction][i] = influx[i] / scale_factor
+    ST_target_list = []
+    for val in ST_lookup.values():
+        ST_target_list.append(val)
 
 
     # Training
     print('Training model: ')
     for species, concentration in trainset.items():
         trainset.update({'{}'.format(species): concentration[2:]})
-    train_target = ST_lookup['0 --> U0'][:-1]
+    train_target = ST_target_list[0][:-1]
     losses = train_readout(readout=readout, trainset=trainset, target=train_target, epochs=num_epoch, device=device)
 
 
@@ -79,7 +82,7 @@ def short_term_memory(input_params, time_params, num_epoch):
     print('Testing model: ')
     for species, concentration in testset.items():
         testset.update({'{}'.format(species): concentration[2:]})
-    test_target = ST_lookup['0 --> U0'][:-1]
+    test_target = ST_target_list[0][:-1]
     final_accuracy = test_readout(readout=readout, testset=testset, target=test_target, device=device)
 
 

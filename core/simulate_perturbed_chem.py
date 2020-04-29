@@ -109,10 +109,17 @@ def plot_concentration (time_lookup, concentration_lookup, show_title):
             show_title (bool): True: display the title; False: not display the title
     '''
 
-    color_array = ['#000000', '#0000FF', '#00FF00', '#00FFFF', '#000080',
-                   '#008000', '#008080', '#800000', '#800080', '#808000',
-                   '#808080', '#C0C0C0', '#FF0000', '#FF00FF', '#FFFF00',
-                   '#8B0000', '#006400', '#BDB76B', '#008B8B', '#191970']
+    # color_array = ['#000000', '#0000FF', '#00FF00', '#00FFFF', '#000080',
+    #                '#008000', '#008080', '#800000', '#800080', '#808000',
+    #                '#808080', '#C0C0C0', '#FF0000', '#FF00FF', '#FFFF00',
+    #                '#8B0000', '#006400', '#BDB76B', '#008B8B', '#191970']
+
+    color_array = ['#a4bea0', '#d89065', '#7c4121', '#7e4066', '#dfd7bb', '#8bad9d',
+                   '#c37655', '#ae431f', '#9900cc', '#0000ff', '#ff0099', '#00ffff',
+                   '#ff4105', '#a97f58', '#161616', '#17282f', '#ffff00', '#7fffd4',
+                   '#7fff00', '#e4edd6', '#d8cdea', '#bc1c17', '#ecc37f', '#cf2319', 
+                   '#61656e', '#24244b', '#ff6600', '#c0d6e4', '#588b76', '#336c6d', 
+                   '#eabfb9', '#d2aba6', '#b86b77', '#aaaaaa', '#dddddd', '#f4d4c9']
 
     plt.rc('font', family='serif')
     plt.rc('xtick', labelsize='x-small')

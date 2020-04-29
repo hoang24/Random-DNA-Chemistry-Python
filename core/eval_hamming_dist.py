@@ -23,8 +23,8 @@ fitness_stds = []
 base_influx_list = []
 hold_time_list = []
 
-num_exp = 10
-num_epoch = 10
+num_exp = 1
+num_epoch = 1
 for input_param in input_params:
     for time_param in time_params:
         print(colored('baseIn = {}; thold = {}'.format(input_param['theta_in']['mean'], time_param['t_hold']), 'white', 'on_red'))
@@ -42,8 +42,8 @@ for input_param in input_params:
         base_influx_list.append(input_param['theta_in']['mean'])
         hold_time_list.append(time_param['t_hold'])
 
-df_NRMSE = pd.DataFrame({'input range (species/sec)': base_influx_list,                                                                                  
-                         'tau (sec)': hold_time_list,                                                                                  
+df_NRMSE = pd.DataFrame({'input range (species/sec)': base_influx_list,
+                         'tau (sec)': hold_time_list,
                          'NRMSE_means': NRMSE_means,
                          'NRMSE_stds': NRMSE_stds})
 df_NRMSE.to_csv('dat/HD_NRMSE_{}ep_{}ex.csv'.format(num_epoch, num_exp), index=False)
