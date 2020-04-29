@@ -5,7 +5,7 @@
 n = 9
 p = 0.846
 y = 0.214
-a_in = 1/9; # 0.222
+a_in = 1/9; # GA value: 0.222 # 2-input reservoir
 a_out = 0.613
 theta_mean = 0.148
 theta_var = 0.0185
