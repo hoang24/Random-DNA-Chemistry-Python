@@ -99,7 +99,7 @@ def create_influx_lookup (randomDNAChem, num_time_element):
 
     return influx_lookup
 
-def plot_concentration (time_lookup, concentration_lookup, show_title):
+def plot_concentration (time_lookup, concentration_lookup, show_title=False):
     '''
         Method to plot concentration over time for a particular Gillespy2 trajectory
         Args:

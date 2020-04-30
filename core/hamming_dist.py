@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 
 
-def hamming_dist(input_params, time_params, num_epoch, plot_chem=False):
+def hamming_dist(input_params, time_params, num_epoch, plot_chem=False, error_plot=False):
     '''
         Method to calculate the Hamming distance between 2 input bitstream
         Args: 
@@ -15,6 +15,7 @@ def hamming_dist(input_params, time_params, num_epoch, plot_chem=False):
             time_params (dict): dictionary of time parameters
             num_epoch (int): number of epoch
             plot_chem (bool): whether to generate the concentration plots
+            error_plot (bool): whether to generate the error plots
         Returns:
             NRMSE_per_epoch[-1] (numpy.float64): NRMSE of the final epoch 
             fitness_per_epoch[-1] (numpy.float64): fitness of the final epoch 
@@ -26,8 +27,8 @@ def hamming_dist(input_params, time_params, num_epoch, plot_chem=False):
 
     # Plot chemistry
     if plot_chem:
-        plot_concentration(time_lookup=time_lookup, concentration_lookup=concentration_lookup[0], show_title=False)
-        plot_concentration(time_lookup=time_lookup, concentration_lookup=concentration_lookup[1], show_title=False)
+        plot_concentration(time_lookup=time_lookup, concentration_lookup=concentration_lookup[0])
+        plot_concentration(time_lookup=time_lookup, concentration_lookup=concentration_lookup[1])
 
     # Create trainset and testset
     trainset = create_trainset(concentration_lookup=concentration_lookup)
@@ -76,10 +77,11 @@ def hamming_dist(input_params, time_params, num_epoch, plot_chem=False):
 
     # Performance analysis
     RMSE_per_epoch, NRMSE_per_epoch, fitness_per_epoch, avgLoss_per_epoch = analyze_error(losses=losses, num_epoch=num_epoch)
-    # plot_error(type_per_epoch=RMSE_per_epoch, num_epoch=num_epoch, plot_type='RMSE')
-    # plot_error(type_per_epoch=NRMSE_per_epoch, num_epoch=num_epoch, plot_type='NRMSE')
-    # plot_error(type_per_epoch=fitness_per_epoch, num_epoch=num_epoch, plot_type='fitness')
-    # plot_error(type_per_epoch=avgLoss_per_epoch, num_epoch=num_epoch, plot_type='avgLoss')
+    if error_plot:
+        plot_error(type_per_epoch=RMSE_per_epoch, num_epoch=num_epoch, plot_type='RMSE')
+        plot_error(type_per_epoch=NRMSE_per_epoch, num_epoch=num_epoch, plot_type='NRMSE')
+        plot_error(type_per_epoch=fitness_per_epoch, num_epoch=num_epoch, plot_type='fitness')
+        plot_error(type_per_epoch=avgLoss_per_epoch, num_epoch=num_epoch, plot_type='avgLoss')
 
 
     # Testing
