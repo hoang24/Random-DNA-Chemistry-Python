@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 
 
-def long_term_memory(input_params, time_params, num_epoch, plot_chem, error_plot):
+def long_term_memory(input_params, time_params, num_epoch, plot_chem=False, error_plot=False):
     # Load data from chemistry
     time_lookup, concentration_lookup, randomDNAChem = load_chem_data(input_params, time_params)
 
