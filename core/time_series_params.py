@@ -1,18 +1,34 @@
+# '''
+#     Optimized parameters from GA (26 generations)
+#     Use for Hamming distance task
+# '''
+# n = 9
+# p = 0.846
+# y = 0.214
+# a_in = 1/9; # 1-input reservoir
+# a_out = 0.613
+# theta_mean = 0.148
+# theta_var = 0.0185
+# theta_in = 0.000315
+# theta_out = 0.000228
+# phi_mean = 2.57
+# phi_var = 0.0973
+
 '''
-    Optimized parameters from GA
-    Use for short-term and long-term memory tasks
+    Optimized parameters from GA (33 generations)
+    Use for Hamming distance task
 '''
 n = 9
 p = 0.846
 y = 0.214
-a_in = 1/9; # GA value: 0.222 # 2-input reservoir
-a_out = 0.613
+a_in = 1/9 # 1-input reservoir
+a_out = 0.0193
 theta_mean = 0.148
-theta_var = 0.0185
-theta_in = 0.000315
-theta_out = 0.000228
-phi_mean = 2.57
-phi_var = 0.0973
+theta_var = 0.00530
+theta_in = 0.000344
+theta_out = 0.000152
+phi_mean = 2.48
+phi_var = 0.136
 
 input_params1 = {
     # 'V': 1e-6, # Volume of the chamber containing the chemistry
