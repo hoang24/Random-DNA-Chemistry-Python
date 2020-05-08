@@ -1,5 +1,5 @@
 # '''
-#     Optimized parameters from GA (26 generations)
+#     Optimized parameters from GA (25 generations)
 #     Use for Hamming distance task
 # '''
 # n = 9
@@ -15,7 +15,7 @@
 # phi_var = 0.0973
 
 '''
-    Optimized parameters from GA (33 generations)
+    Optimized parameters from GA (32 generations)
     Use for Hamming distance task
 '''
 n = 9

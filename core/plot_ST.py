@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 num_epoch = 10
-num_exp = 10
+num_exp = 20
 
 plt.rc('font', family='serif')
 plt.rc('xtick', labelsize='x-large')
@@ -14,7 +14,7 @@ ax = fig.add_subplot(1, 1, 1)
 df_NRMSE = pd.read_csv('dat/ST_NRMSE_{}ep_{}ex.csv'.format(num_epoch, num_exp))
 df_NRMSE_mean = df_NRMSE.pivot(index='input range (species/sec)',columns='tau (sec)',values='NRMSE_means')
 df_NRMSE_stds = df_NRMSE.pivot(index='input range (species/sec)',columns='tau (sec)',values='NRMSE_stds')
-ax_NRMSE = df_NRMSE_mean.plot(kind='bar', yerr=df_NRMSE_stds.values, capsize=3, grid=True, rot=0)
+ax_NRMSE = df_NRMSE_mean.plot(kind='bar', yerr=df_NRMSE_stds.values, grid=True, rot=0, error_kw=dict(lw=1, capsize=2, capthick=1))
 ax_NRMSE.grid(linestyle=':')
 ax_NRMSE.legend(loc='lower right', handlelength=1.0, framealpha=0.5, title=r'$\tau$ (s)', fontsize='medium', ncol=2)
 # plt.title('Short-term Memory Task')

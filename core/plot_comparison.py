@@ -34,11 +34,6 @@ df_NRMSE = pd.read_csv('dat/model_comparison.csv')
 df_NRMSE_mean = df_NRMSE.pivot(index='CRN Model',columns='Task',values='NRMSE_mean')
 df_NRMSE_stds = df_NRMSE.pivot(index='CRN Model',columns='Task',values='NRMSE_stds')
 
-# df_NRMSE_mean.columns = df_NRMSE_stds.columns.swaplevel(2,0)
-# df_NRMSE_stds.columns = df_NRMSE_stds.columns.swaplevel(2,0)
-df_NRMSE_mean.columns.sort_index(1)
-df_NRMSE_stds.columns.sort_index(1)
-
 ax_NRMSE = df_NRMSE_mean.plot(kind='bar', yerr=df_NRMSE_stds, capsize=3, grid=True, rot=0)
 ax_NRMSE.grid(linestyle=':')
 ax_NRMSE.legend(loc='best', handlelength=2.0, framealpha=0.5, fontsize='x-large')
