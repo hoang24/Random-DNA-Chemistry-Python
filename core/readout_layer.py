@@ -40,7 +40,7 @@ def train_readout(readout, trainset, target, epochs, device):
 
     # Initialize a list of losses and a running loss
     losses = []
-    running_loss = 0
+    # running_loss = 0
 
     x_matrix = [] # matrix of all concentration vectors
     for concentration in trainset.values():
@@ -70,10 +70,10 @@ def train_readout(readout, trainset, target, epochs, device):
 
             # Stats
             losses_per_epoch.append(loss.item())
-            running_loss += loss.item()
-            if i % 1000 == 0: # calculate cumulative loss over 1000 timestep
-                print("\tepoch {}, inst {:<4}\trunning loss: {}".format(epoch, i, running_loss))
-                running_loss = 0
+            # running_loss += loss.item()
+            # if i % 1000 == 0: # calculate cumulative loss over 1000 timestep
+                # print("\tepoch {}, inst {:<4}\trunning loss: {}".format(epoch, i, running_loss))
+                # running_loss = 0
         losses.append(losses_per_epoch)
 
     return losses
@@ -119,8 +119,8 @@ def test_readout(readout, testset, target, device):
         accuracy = (correct / total) * 100
 
         # Stats
-        if i % 1000 == 0: # calculate cumulative accuracy over the entire simulation time up to each 1000 timestep
-            print("\tinst {:<4}\tcurrent accuracy: {:.3f}%".format(i, accuracy))
+        # if i % 1000 == 0: # calculate cumulative accuracy over the entire simulation time up to each 1000 timestep
+            # print("\tinst {:<4}\tcurrent accuracy: {:.3f}%".format(i, accuracy))
 
     # Print final result
     final_accuracy = accuracy

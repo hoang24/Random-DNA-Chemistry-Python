@@ -13,8 +13,8 @@ Genetic algorithm parameters:
     Mating pool size (number of parents mating)
     Population size (solution per population)
 """
-sol_per_pop = 32
-mate_pool_size = sol_per_pop / 2
+sol_per_pop = 100
+mate_pool_size = 20
 if (mate_pool_size % 2) != 0:
     mate_pool_size = np.floor(mate_pool_size + 1)
 mate_pool_size = int(mate_pool_size)
