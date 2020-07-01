@@ -74,6 +74,12 @@ def train_readout(readout, trainset, target, epochs, device):
             # if i % 1000 == 0: # calculate cumulative loss over 1000 timestep
                 # print("\tepoch {}, inst {:<4}\trunning loss: {}".format(epoch, i, running_loss))
                 # running_loss = 0
+
+        # Print weights
+        print("Training weights: ")
+        for weight in readout.parameters():
+            print(weight.data)
+
         losses.append(losses_per_epoch)
 
     return losses
