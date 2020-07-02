@@ -1,0 +1,11 @@
+directive simulation {
+    final=$final;
+    plots=[$species_list];
+}
+directive simulator stochastic
+directive parameters [$rate_list]
+directive compilation infinite
+$dom_list
+$def_list
+( $initial_cond_list
+)
