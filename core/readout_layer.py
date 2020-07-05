@@ -38,9 +38,10 @@ def train_readout(readout, trainset, target, epochs, device):
     criterion = nn.MSELoss()
     optimizer = optim.SGD(readout.parameters(), lr=0.001)
 
-    # Initialize a list of losses and a running loss
+    # Initialize a list of losses, running loss, and outputs
     losses = []
     # running_loss = 0
+    outputs = []
 
     x_matrix = [] # matrix of all concentration vectors
     for concentration in trainset.values():
@@ -70,6 +71,8 @@ def train_readout(readout, trainset, target, epochs, device):
 
             # Stats
             losses_per_epoch.append(loss.item())
+            if epoch == range(epochs)[-1]:
+                outputs.append(output.item())
             # running_loss += loss.item()
             # if i % 1000 == 0: # calculate cumulative loss over 1000 timestep
                 # print("\tepoch {}, inst {:<4}\trunning loss: {}".format(epoch, i, running_loss))
@@ -82,7 +85,7 @@ def train_readout(readout, trainset, target, epochs, device):
 
         losses.append(losses_per_epoch)
 
-    return losses
+    return losses, outputs
 
 
 def test_readout(readout, testset, target, device):

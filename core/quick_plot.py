@@ -6,9 +6,12 @@ from long_term_memory import long_term_memory
 import numpy as np
 import matplotlib.pyplot as plt
 
-# NRMSE, fitness = hamming_dist(input_params=input_params5, time_params=time_params1, num_epoch=10, plot_chem=False, error_plot=False)
-NRMSE, fitness = short_term_memory(input_params=input_params5, time_params=time_params1, num_epoch=10, plot_chem=False, error_plot=False, plot_target=True)
-NRMSE, fitness = long_term_memory(input_params=input_params5, time_params=time_params1, num_epoch=10, plot_chem=False, error_plot=False, plot_target=True)
+# NRMSE, fitness = hamming_dist(input_params=input_params5, time_params=time_params1, num_epoch=10, 
+#                               plot_chem=False, error_plot=False)
+NRMSE, fitness = short_term_memory(input_params=input_params5, time_params=time_params1, num_epoch=10, 
+                                   plot_chem=False, error_plot=False, plot_target=False, plot_output=True)
+NRMSE, fitness = long_term_memory(input_params=input_params5, time_params=time_params1, num_epoch=10, 
+                                  plot_chem=False, error_plot=False, plot_target=False, plot_output=True)
 
 # print('NRMSE:', NRMSE)
 # print('fitness:', fitness)

@@ -72,7 +72,7 @@ def hamming_dist(input_params, time_params, num_epoch, plot_chem=False, error_pl
     # Training
     print('Training model: ')
     train_target, hamm_dist = hamming_distance(influx_list[0], influx_list[1])
-    losses = train_readout(readout=readout, trainset=trainset, target=train_target, epochs=num_epoch, device=device)
+    losses, outputs = train_readout(readout=readout, trainset=trainset, target=train_target, epochs=num_epoch, device=device)
 
 
     # Performance analysis

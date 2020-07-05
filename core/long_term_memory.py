@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 
 
-def long_term_memory(input_params, time_params, num_epoch, plot_chem=False, error_plot=False, plot_target=False):
+def long_term_memory(input_params, time_params, num_epoch, plot_chem=False, error_plot=False, plot_target=False, plot_output=False):
     # Load data from chemistry
     time_lookup, concentration_lookup, randomDNAChem = load_chem_data(input_params, time_params)
 
@@ -46,6 +46,24 @@ def long_term_memory(input_params, time_params, num_epoch, plot_chem=False, erro
             LT_target_per_reaction.append(rate_in[ir_index - t_hold_index] + (1/2)*rate_in[ir_index - t_hold_32_index])
         LT_lookup.update({'{}'.format(r_in): LT_target_per_reaction})
 
+    for reaction, influx in LT_lookup.items():
+        scale_factor = max(influx) / 1 # scale the influx value between 0 and 1
+        for i in range(len(influx)):
+            LT_lookup[reaction][i] = influx[i] / scale_factor
+    LT_target_list = []
+    for val in LT_lookup.values():
+        LT_target_list.append(val)
+
+
+    # Training
+    print('Training model: ')
+    for species, concentration in trainset.items():
+        trainset.update({'{}'.format(species): concentration[t_hold_32_index:]})
+    train_target = LT_target_list[0][:-t_hold_index]
+    losses, outputs = train_readout(readout=readout, trainset=trainset, target=train_target, epochs=num_epoch, device=device)
+
+
+    # Target plots
     if plot_target:
         color_array = ['#000000', '#0000FF', '#00FF00', '#00FFFF', '#000080',
                        '#008000', '#008080', '#800000', '#800080', '#808000',
@@ -62,21 +80,17 @@ def long_term_memory(input_params, time_params, num_epoch, plot_chem=False, erro
         plt.legend(by_label.values(), by_label.keys(), loc='best')
         plt.show()
 
-    for reaction, influx in LT_lookup.items():
-        scale_factor = max(influx) / 1 # scale the influx value between 0 and 1
-        for i in range(len(influx)):
-            LT_lookup[reaction][i] = influx[i] / scale_factor
-    LT_target_list = []
-    for val in LT_lookup.values():
-        LT_target_list.append(val)
 
-
-    # Training
-    print('Training model: ')
-    for species, concentration in trainset.items():
-        trainset.update({'{}'.format(species): concentration[t_hold_32_index:]})
-    train_target = LT_target_list[0][:-t_hold_index]
-    losses = train_readout(readout=readout, trainset=trainset, target=train_target, epochs=num_epoch, device=device)
+    # Output and Target plot
+    if plot_output:
+        plt.figure(figsize = (9,5))
+        # plt.title('Long Term Memory Task')
+        plt.xlabel('time (s)')
+        plt.ylabel('Target and Output')
+        plt.plot(time_lookup[t_hold_32_index:], train_target, color='red')
+        plt.plot(time_lookup[t_hold_32_index:], outputs, color='black')
+        plt.legend(('Target', 'Output'))
+        plt.show()
 
 
     # Performance analysis

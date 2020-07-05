@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 
 
-def short_term_memory(input_params, time_params, num_epoch, plot_chem=False, error_plot=False, plot_target=False):
+def short_term_memory(input_params, time_params, num_epoch, plot_chem=False, error_plot=False, plot_target=False, plot_output=False):
     # Load data from chemistry
     time_lookup, concentration_lookup, randomDNAChem = load_chem_data(input_params, time_params)
 
@@ -39,6 +39,24 @@ def short_term_memory(input_params, time_params, num_epoch, plot_chem=False, err
             ST_target_per_reaction.append(rate_in[ir_index - 1] + 2*rate_in[ir_index - 2])
         ST_lookup.update({'{}'.format(r_in): ST_target_per_reaction})
 
+    for reaction, influx in ST_lookup.items():
+        scale_factor = max(influx) / 1 # scale the influx value between 0 and 1
+        for i in range(len(influx)):
+            ST_lookup[reaction][i] = influx[i] / scale_factor
+    ST_target_list = []
+    for val in ST_lookup.values():
+        ST_target_list.append(val)
+
+
+    # Training
+    print('Training model: ')
+    for species, concentration in trainset.items():
+        trainset.update({'{}'.format(species): concentration[2:]})
+    train_target = ST_target_list[0][:-1]
+    losses, outputs = train_readout(readout=readout, trainset=trainset, target=train_target, epochs=num_epoch, device=device)
+
+
+    # Target plots
     if plot_target:
         color_array = ['#000000', '#0000FF', '#00FF00', '#00FFFF', '#000080',
                        '#008000', '#008080', '#800000', '#800080', '#808000',
@@ -55,21 +73,17 @@ def short_term_memory(input_params, time_params, num_epoch, plot_chem=False, err
         plt.legend(by_label.values(), by_label.keys(), loc='best')
         plt.show()
 
-    for reaction, influx in ST_lookup.items():
-        scale_factor = max(influx) / 1 # scale the influx value between 0 and 1
-        for i in range(len(influx)):
-            ST_lookup[reaction][i] = influx[i] / scale_factor
-    ST_target_list = []
-    for val in ST_lookup.values():
-        ST_target_list.append(val)
 
-
-    # Training
-    print('Training model: ')
-    for species, concentration in trainset.items():
-        trainset.update({'{}'.format(species): concentration[2:]})
-    train_target = ST_target_list[0][:-1]
-    losses = train_readout(readout=readout, trainset=trainset, target=train_target, epochs=num_epoch, device=device)
+    # Output and Target plot
+    if plot_output:
+        plt.figure(figsize = (9,5))
+        # plt.title('Short Term Memory Task')
+        plt.xlabel('time (s)')
+        plt.ylabel('Target and Output')
+        plt.plot(time_lookup[2:], train_target, color='red')
+        plt.plot(time_lookup[2:], outputs, color='black')
+        plt.legend(('Target', 'Output'))
+        plt.show()
 
 
     # Performance analysis
