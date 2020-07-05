@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 
 
-def long_term_memory(input_params, time_params, num_epoch, plot_chem=False, error_plot=False):
+def long_term_memory(input_params, time_params, num_epoch, plot_chem=False, error_plot=False, plot_target=False):
     # Load data from chemistry
     time_lookup, concentration_lookup, randomDNAChem = load_chem_data(input_params, time_params)
 
@@ -46,20 +46,21 @@ def long_term_memory(input_params, time_params, num_epoch, plot_chem=False, erro
             LT_target_per_reaction.append(rate_in[ir_index - t_hold_index] + (1/2)*rate_in[ir_index - t_hold_32_index])
         LT_lookup.update({'{}'.format(r_in): LT_target_per_reaction})
 
-    # color_array = ['#000000', '#0000FF', '#00FF00', '#00FFFF', '#000080',
-    #                '#008000', '#008080', '#800000', '#800080', '#808000',
-    #                '#808080', '#C0C0C0', '#FF0000', '#FF00FF', '#FFFF00',
-    #                '#8B0000', '#006400', '#BDB76B', '#008B8B', '#191970']
-    # plt.figure(figsize = (18,10))
-    # plt.title('Plot of Long Term Memory Task target')
-    # plt.xlabel('time')
-    # plt.ylabel('LT memory target')
-    # for reaction_index, (reaction, LT_target) in enumerate(LT_lookup.items()):
-    #     plt.plot(time_lookup[t_hold_32_index:], LT_target[:-t_hold_index], color=color_array[reaction_index], label=reaction)
-    # handles, labels = plt.gca().get_legend_handles_labels()
-    # by_label = OrderedDict(zip(labels, handles))
-    # plt.legend(by_label.values(), by_label.keys(), loc='best')
-    # plt.show()
+    if plot_target:
+        color_array = ['#000000', '#0000FF', '#00FF00', '#00FFFF', '#000080',
+                       '#008000', '#008080', '#800000', '#800080', '#808000',
+                       '#808080', '#C0C0C0', '#FF0000', '#FF00FF', '#FFFF00',
+                       '#8B0000', '#006400', '#BDB76B', '#008B8B', '#191970']
+        plt.figure(figsize = (18,10))
+        plt.title('Plot of Long Term Memory Task target')
+        plt.xlabel('time')
+        plt.ylabel('LT memory target')
+        for reaction_index, (reaction, LT_target) in enumerate(LT_lookup.items()):
+            plt.plot(time_lookup[t_hold_32_index:], LT_target[:-t_hold_index], color=color_array[reaction_index], label=reaction)
+        handles, labels = plt.gca().get_legend_handles_labels()
+        by_label = OrderedDict(zip(labels, handles))
+        plt.legend(by_label.values(), by_label.keys(), loc='best')
+        plt.show()
 
     for reaction, influx in LT_lookup.items():
         scale_factor = max(influx) / 1 # scale the influx value between 0 and 1
