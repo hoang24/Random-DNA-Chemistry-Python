@@ -76,13 +76,17 @@ def short_term_memory(input_params, time_params, num_epoch, plot_chem=False, err
 
     # Output and Target plot
     if plot_output:
+        plt.rc('font', family='serif')
+        plt.rc('xtick', labelsize='x-large')
+        plt.rc('ytick', labelsize='x-large')
         plt.figure(figsize = (9,5))
         # plt.title('Short Term Memory Task')
-        plt.xlabel('time (s)')
-        plt.ylabel('Target and Output')
+        plt.xlabel('time (s)', fontsize='x-large')
+        plt.ylabel('Target and Output', fontsize='x-large')
         plt.plot(time_lookup[2:], train_target, color='red')
         plt.plot(time_lookup[2:], outputs, color='black')
-        plt.legend(('Target', 'Output'))
+        plt.legend(('Target', 'Output'), fontsize='x-large')
+        plt.tight_layout()
         plt.show()
 
 
