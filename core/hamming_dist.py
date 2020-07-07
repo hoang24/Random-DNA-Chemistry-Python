@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 
 
-def hamming_dist(input_params, time_params, num_epoch, plot_chem=False, error_plot=False):
+def hamming_dist(input_params, time_params, num_epoch, plot_chem=False, error_plot=False, plot_input=False):
     '''
         Method to calculate the Hamming distance between 2 input bitstream
         Args: 
@@ -44,7 +44,10 @@ def hamming_dist(input_params, time_params, num_epoch, plot_chem=False, error_pl
 
     # Create lookup dictionary for TARGET of Hamming distance task
     influx_lookup = create_influx_lookup(randomDNAChem=randomDNAChem, num_time_element=1001)
-    # plot_influx(time_lookup, influx_lookup)
+
+    if plot_input:
+        plot_influx(time_lookup, influx_lookup)
+
     for reaction, influx in influx_lookup.items():
         scale_factor = max(influx) / 1 # scale the influx value between 0 and 1
         for i in range(len(influx)):

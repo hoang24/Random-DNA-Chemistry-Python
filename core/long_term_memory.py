@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 
 
-def long_term_memory(input_params, time_params, num_epoch, plot_chem=False, error_plot=False, plot_target=False, plot_output=False):
+def long_term_memory(input_params, time_params, num_epoch, plot_chem=False, error_plot=False, plot_target=False, plot_input=False, plot_output=False):
     # Load data from chemistry
     time_lookup, concentration_lookup, randomDNAChem = load_chem_data(input_params, time_params)
 
@@ -81,6 +81,11 @@ def long_term_memory(input_params, time_params, num_epoch, plot_chem=False, erro
         plt.show()
 
 
+    # Plot input
+    if plot_input:
+        plot_influx(time_lookup, influx_lookup)
+
+
     # Output and Target plot
     if plot_output:
         plt.rc('font', family='serif')
@@ -90,8 +95,8 @@ def long_term_memory(input_params, time_params, num_epoch, plot_chem=False, erro
         # plt.title('Long Term Memory Task')
         plt.xlabel('time (s)', fontsize='x-large')
         plt.ylabel('Target and Output', fontsize='x-large')
-        plt.plot(time_lookup[t_hold_32_index:], train_target, color='red')
-        plt.plot(time_lookup[t_hold_32_index:], outputs, color='black')
+        plt.plot(time_lookup[t_hold_32_index:], np.array(train_target) * scale_factor, color='red')
+        plt.plot(time_lookup[t_hold_32_index:], np.array(outputs) * scale_factor, color='black')
         plt.legend(('Target', 'Output'), fontsize='x-large')
         plt.tight_layout()
         plt.show()

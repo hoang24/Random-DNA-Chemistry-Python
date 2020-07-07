@@ -1,4 +1,4 @@
-from simulate_perturbed_chem import plot_concentration, create_influx_lookup
+from simulate_perturbed_chem import plot_concentration, create_influx_lookup, plot_influx
 from readout_utils import load_chem_data, create_trainset, create_testset, analyze_error, plot_error
 from readout_layer import ReadOutLayer, train_readout, test_readout
 import torch
@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 
 
-def short_term_memory(input_params, time_params, num_epoch, plot_chem=False, error_plot=False, plot_target=False, plot_output=False):
+def short_term_memory(input_params, time_params, num_epoch, plot_chem=False, error_plot=False, plot_target=False, plot_input=False, plot_output=False):
     # Load data from chemistry
     time_lookup, concentration_lookup, randomDNAChem = load_chem_data(input_params, time_params)
 
@@ -74,6 +74,11 @@ def short_term_memory(input_params, time_params, num_epoch, plot_chem=False, err
         plt.show()
 
 
+    # Input plots
+    if plot_input:
+        plot_influx(time_lookup, influx_lookup)
+
+
     # Output and Target plot
     if plot_output:
         plt.rc('font', family='serif')
@@ -83,8 +88,8 @@ def short_term_memory(input_params, time_params, num_epoch, plot_chem=False, err
         # plt.title('Short Term Memory Task')
         plt.xlabel('time (s)', fontsize='x-large')
         plt.ylabel('Target and Output', fontsize='x-large')
-        plt.plot(time_lookup[2:], train_target, color='red')
-        plt.plot(time_lookup[2:], outputs, color='black')
+        plt.plot(time_lookup[2:], np.array(train_target) * scale_factor, color='red')
+        plt.plot(time_lookup[2:], np.array(outputs) * scale_factor, color='black')
         plt.legend(('Target', 'Output'), fontsize='x-large')
         plt.tight_layout()
         plt.show()

@@ -7,11 +7,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # NRMSE, fitness = hamming_dist(input_params=input_params5, time_params=time_params1, num_epoch=10, 
-#                               plot_chem=False, error_plot=False)
+#                               plot_chem=False, error_plot=False, plot_input=False)
 NRMSE, fitness = short_term_memory(input_params=input_params5, time_params=time_params1, num_epoch=10, 
-                                   plot_chem=False, error_plot=False, plot_target=False, plot_output=True)
+                                   plot_chem=False, error_plot=False, plot_target=False, plot_input=False, plot_output=False)
 NRMSE, fitness = long_term_memory(input_params=input_params5, time_params=time_params1, num_epoch=10, 
-                                  plot_chem=False, error_plot=False, plot_target=False, plot_output=True)
+                                  plot_chem=False, error_plot=False, plot_target=False, plot_input=False, plot_output=False)
 
 # print('NRMSE:', NRMSE)
 # print('fitness:', fitness)
