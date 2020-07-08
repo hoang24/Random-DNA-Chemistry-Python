@@ -55,8 +55,8 @@ def renderRate(toehold, base_bind, base_unbind):
     bindList = []
     unbindList = []
     for i in range(len(toehold)):
-        bindList.append(f'k{i}')
-        unbindList.append(f'u{i}')
+        bindList.append(f'b{i}')
+        unbindList.append(f'ub{i}')
 
     rendered_rates = []
     for k, u in zip(bindList, unbindList):
@@ -99,13 +99,13 @@ def renderInitialConditions(conU, conL, conF, conP):
     '''
     rendered_initial_conditions = []
     for u, conu in conU.items():
-        rendered_initial_conditions.append(f'{conu} {u}()')
+        rendered_initial_conditions.append(f'{conu[0]} {u}()')
     for l, conl in conL.items():
-        rendered_initial_conditions.append(f'{conl} {l}()')
+        rendered_initial_conditions.append(f'{conl[0]} {l}()')
     for f, conf in conF.items():
-        rendered_initial_conditions.append(f'{conf} {f}()')
+        rendered_initial_conditions.append(f'{conf[0]} {f}()')
     for p, conp in conP.items():
-        rendered_initial_conditions.append(f'{conp} {p}()')
+        rendered_initial_conditions.append(f'{conp[0]} {p}()')
     return rendered_initial_conditions
 
 def renderDSD(rendered_species, rendered_rates, rendered_domains, rendered_modules, rendered_initial_conditions):
