@@ -1,0 +1,36 @@
+// Method 2: No 3rd domain, same number is full double
+// Species: U0, U1, U2, L0, L1, L2, L3
+
+directive simulation {
+    final=50;
+    plots=[U0(); U1(); L0(); L1(); ];
+}
+directive simulator stochastic
+directive parameters [b0=0.003; ub0=0.1]
+directive compilation infinite
+
+dom d0 = {bind=b0;unbind=ub0;colour="red"} // domain for U0 and L0
+dom d1 = {bind=b0;unbind=ub0;colour="orange"} // domain for U1 and L1
+dom d2 = {bind=b0;unbind=ub0;colour="green"} // domain for U0 and L0
+dom d3 = {bind=b0;unbind=ub0;colour="blue"} // domain for U1 and L1
+dom main = {bind=b0;unbind=ub0;colour="black"} // "recognition" domain
+dom trans = {bind=b0;unbind=ub0;colour="purple"} // transition domain
+
+def U0() = <main^ trans^ d0^>
+def U1() = <main^ trans^ d1^>
+def U2() = <main^ trans^ d2^>
+//def U3() = <main^ trans^ d3^>
+def L0() = {main^* trans^* d0^*}
+def L1() = {main^* trans^* d1^*}
+def L2() = {main^* trans^* d2^*}
+def L3() = {main^* trans^* d3^*}
+
+( 100 U0()
+| 100 U1()
+| 100 U2()
+//| 100 U3()
+| 100 L0()
+| 100 L1()
+| 100 L2()
+| 100 L3()
+)

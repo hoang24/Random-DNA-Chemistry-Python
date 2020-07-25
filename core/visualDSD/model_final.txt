@@ -1,0 +1,33 @@
+directive simulation {
+    final=50;
+    plots=[U0(); U1(); L0(); L1(); U0L0(); U0L1(); U1L0(); U1L1()];
+}
+directive simulator stochastic
+directive parameters [b0=0.003; ub0=0.1]
+directive compilation infinite
+
+dom d0 = {bind=b0;unbind=ub0;colour="red"} // domain for U0 and L0
+dom du1 = {bind=b0;unbind=ub0;colour="blue"} // domain for U1 and L1
+dom dl1 = {bind=b0;unbind=ub0;colour="orange"} // domain for L1
+dom green = {bind=b0;unbind=ub0;colour="green"} // transition domain
+dom lime = {bind=b0;unbind=ub0;colour="lime"} // transition domain
+dom dr = {bind=b0;unbind=ub0;colour="black"} // "recognition" domain
+
+def U0() = <dr^ lime^ green^ d0^>
+def U1() = <dr^ lime^ green^ du1^>
+def L0() = {dr^* lime^* green^* d0^*}
+def L1() = {dr^* lime^* dl1^*}
+def U0L0() = [dr^ lime^ green^ d0^]
+def U0L1() = [dr^ lime^]<green^ d0^>{dl1^*}
+def U1L0() = [dr^ lime^ green^]<du1^>{d0^*}
+def U1L1() = [dr^ lime^]<green^ du1^>{dl1^*}
+
+( 100 U0()
+| 100 U1()
+| 100 L0()
+| 100 L1()
+| 100 U0L0()
+| 100 U0L1()
+| 100 U1L0()
+| 100 U1L1()
+)

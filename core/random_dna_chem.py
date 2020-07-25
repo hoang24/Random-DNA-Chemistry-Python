@@ -98,13 +98,18 @@ class RandomDNAStrandDisplacementCircuit(object):
         norm_dist = np.abs(norm_dist)
         self.input_params['phi'].update({'norm_dist': norm_dist})
 
+        # Convert the normal distribution list to a rounded integer list
         list_double_per_upper = []
         for norm_dist_value in norm_dist:
             list_double_per_upper.append(int(round(norm_dist_value)))
 
-        for dpu_idx in range(len(list_double_per_upper)):
-            if list_double_per_upper[dpu_idx] > (nL - nL):
-                list_double_per_upper[dpu_idx] = nL - nF
+        # Uncount the full double from the partial double list
+        for index_full in index_full_list:
+            list_double_per_upper[index_full] -= 1
+
+        # for dpu_idx in range(len(list_double_per_upper)):
+        #     if list_double_per_upper[dpu_idx] > (nL - nF):
+        #         list_double_per_upper[dpu_idx] = nL - nF
 
         P = F
         # count = 0

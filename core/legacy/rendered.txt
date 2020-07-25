@@ -1,0 +1,48 @@
+directive simulation {
+    final=1.0;
+    plots=[U0(); U1(); U2(); L0(); L1(); L2(); L3(); U1L1(); U0L3(); U0L0(); U0L2(); U1L3(); U1L0(); U1L2(); U2L1(); U2L2(); U2L3()];
+}
+directive simulator stochastic
+directive parameters [b0=0.003; ub0=0.1; b1=0.003; ub1=0.1; b2=0.003; ub2=0.1; b3=0.003; ub3=0.1; b4=0.003; ub4=0.1; b5=0.003; ub5=0.1]
+directive compilation infinite
+dom tu0 = {bind=b0; unbind=ub0}
+dom tu1 = {bind=b1; unbind=ub1}
+dom tu2 = {bind=b2; unbind=ub2}
+dom tl0 = {bind=b3; unbind=ub3}
+dom tl2 = {bind=b4; unbind=ub4}
+dom tl3 = {bind=b5; unbind=ub5}
+def U0() = <u0 tu0^>
+def U1() = <u1 tu1^>
+def U2() = <u2 tu2^>
+def L0() = {l0 tl0^}
+def L1() = {l1 tl1^}
+def L2() = {l2 tl2^}
+def L3() = {l3 tl3^}
+def U1L1() = [u1 tu1^]
+def U0L3() = [u0]<tu0^>{tl3^}
+def U0L0() = [u0]<tu0^>{tl0^}
+def U0L2() = [u0]<tu0^>{tl2^}
+def U1L3() = [u1]<tu1^>{tl3^}
+def U1L0() = [u1]<tu1^>{tl0^}
+def U1L2() = [u1]<tu1^>{tl2^}
+def U2L1() = [u2]<tu2^>{tl1^}
+def U2L2() = [u2]<tu2^>{tl2^}
+def U2L3() = [u2]<tu2^>{tl3^}
+( 937 U0()
+| 680 U1()
+| 195 U2()
+| 433 L0()
+| 606 L1()
+| 691 L2()
+| 179 L3()
+| 870 U1L1()
+| 358 U0L3()
+| 233 U0L0()
+| 963 U0L2()
+| 589 U1L3()
+| 453 U1L0()
+| 524 U1L2()
+| 739 U2L1()
+| 986 U2L2()
+| 496 U2L3()
+)

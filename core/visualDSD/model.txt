@@ -1,0 +1,166 @@
+// Displacement: Upper and Full Double: Ui + UjUi* -> Uj + UiUi*
+// U0 + U1L0 -> U0L0 + U1
+directive simulation {
+    final=100;
+    plots=[U0(); U1L0(); U0L0(); U1()];
+}
+directive simulator stochastic
+directive parameters [b0=0.003; ub0=0.1]
+directive compilation infinite
+dom d0 = {bind=b0;unbind=ub0;colour="red"} // domain for U0 and L0
+dom d1 = {bind=b0;unbind=ub0;colour="blue"} // domain for U1 and L1
+dom dt0 = {bind=b0;unbind=ub0;colour="red"} // transition domain for U0 and L0
+dom dt1 = {bind=b0;unbind=ub0;colour="blue"} // transition domain for U1 and L1
+dom dr = {colour="gray"} // recognition domain
+def U0() = <dr dt0^ d0^>
+def U1L0() = [dr]<dt1^ d1^>{dt0^* d0^*}
+def U0L0() = [dr dt0^ d0^]
+def U1() = <dr dt1^ d1^>
+( 100 U0()
+| 120 U1L0()
+| 0 U0L0()
+| 0 U1()
+)
+
+
+// Displacement: Upper and Partial Double: Ui + UjLk -> Uj + UiLk
+// U2 + U1L0 -> U2L0 + U1
+directive simulation {
+    final=1.0;
+    plots=[U2(); U1L0(); U2L0(); U1()];
+}
+directive simulator stochastic
+directive parameters [b0=0.003; ub0=0.1]
+directive compilation infinite
+dom d0 = {bind=b0;unbind=ub0;colour="red"} // domain for U0 and L0
+dom d1 = {bind=b0;unbind=ub0;colour="blue"} // domain for U1 and L1
+dom d2 = {bind=b0;unbind=ub0;colour="orange"} // domain for U2 and L2
+dom dt1 = {bind=b0;unbind=ub0;colour="blue"} // transition domain for U1 and L1
+dom dt02 = {bind=b0;unbind=ub0;colour="green"} // transition domain for U0,U2 and L0,L2
+dom dr = {colour="gray"} // recognition domain
+def U2() = <dr dt02^ d2^>
+def U1L0() = [dr]<dt1^ d1^>{dt02^* d0^*}
+def U2L0() = [dr dt02^]<d2^>{d0^*}
+def U1() = <dr dt1^ d1^>
+( 100 U2()
+| 120 U1L0()
+| 0 U2L0()
+| 0 U1()
+)
+
+
+// Combine:
+// U0 + U1L0 -> U0L0 + U1
+// U2 + U1L0 -> U2L0 + U1
+// U0 + U2L0 -> U0L0 + U2
+directive simulation {
+    final=50;
+    plots=[U0(); U1(); U2(); U0L0(); U1L0(); U2L0()];
+}
+directive simulator stochastic
+directive parameters [b0=0.003; ub0=0.1]
+directive compilation infinite
+
+dom d0 = {bind=b0;unbind=ub0;colour="red"} // domain for U0 and L0
+dom d1 = {bind=b0;unbind=ub0;colour="blue"} // domain for U1 and L1
+dom d2 = {bind=b0;unbind=ub0;colour="orange"} // domain for U2 and L2
+dom dt02 = {bind=b0;unbind=ub0;colour="green"} // transition domain for U0,L1 and L0,L2
+dom dt1 = {bind=b0;unbind=ub0;colour="blue"} // transition domain for U1 and L1
+dom dr = {colour="gray"} // recognition domain
+
+def U0() = <dr dt02^ d0^>
+def U1() = <dr dt1^ d1^>
+def U2() = <dr dt02^ d2^>
+def U0L0() = [dr dt02^ d0^]
+def U1L0() = [dr]<dt1^ d1^>{dt02^* d0^*}
+def U2L0() = [dr dt02^]<d2^>{d0^*}
+
+( 100 U0()
+| 100 U1()
+| 100 U2()
+| 100 U0L0()
+| 100 U1L0()
+| 100 U2L0()
+)
+
+
+// Displacement: Lower and Full Double: Li + Li*Lj -> Lj + Li*Li
+// L0 + U0L1 -> U0L0 + L1
+directive simulation {
+    final=50;
+    plots=[L0(); L1(); U0L0(); U0L1()];
+}
+directive simulator stochastic
+directive parameters [b0=0.003; ub0=0.1]
+directive compilation infinite
+dom d0 = {bind=b0;unbind=ub0;colour="red"} // domain for U0 and L0
+dom d1 = {bind=b0;unbind=ub0;colour="blue"} // domain for U1 and L1
+dom dt0 = {bind=b0;unbind=ub0;colour="red"} // transition domain for U0 and L0
+dom dt1 = {bind=b0;unbind=ub0;colour="blue"} // transition domain for U1 and L1
+dom dr = {colour="gray"} // recognition domain
+def L0() = {dr* dt0^* d0^*}
+def L1() = {dr* dt1^* d1^*}
+def U0L0() = [dr dt0^ d0^]
+def U0L1() = [dr]<dt0^ d0^>{dt1^* d1^*}
+( 100 L0()
+| 100 L1()
+| 100 U0L0()
+| 100 U0L1()
+)
+
+
+// Displacement: Lower and Partial Double: Li + UjLk -> Lk + UjLi
+// L0 + U1L1 -> U1L0 + L1
+directive simulation {
+    final=50;
+    plots=[L0(); L1(); U1L0(); U1L1()];
+}
+directive simulator stochastic
+directive parameters [b0=0.003; ub0=0.1]
+directive compilation infinite
+dom d0 = {bind=b0;unbind=ub0;colour="red"} // domain for U0 and L0
+dom d1 = {bind=b0;unbind=ub0;colour="blue"} // domain for U1 and L1
+dom dt01 = {bind=b0;unbind=ub0;colour="green"} // transition domain for U0 and L0
+dom dt1 = {bind=b0;unbind=ub0;colour="blue"} // transition domain for U1 and L1
+dom dr = {colour="gray"} // recognition domain
+def L0() = {dr* dt01^* d0^*}
+def L1() = {dr* dt1^* d1^*}
+def U1L0() = [dr dt01^]<d1^>{d0^*}
+def U1L1() = [dr]<dt01^ d1^>{dt1^* d1^*}
+( 100 L0()
+| 100 L1()
+| 100 U1L0()
+| 100 U1L1()
+)
+
+
+// Combine:
+// L0 + U0L1 -> U0L0 + L1
+// L0 + U1L1 -> U1L0 + L1
+directive simulation {
+    final=50;
+    plots=[L0(); L1(); U0L0(); U0L1(); U1L0(); U1L1()];
+}
+directive simulator stochastic
+directive parameters [b0=0.003; ub0=0.1]
+directive compilation infinite
+dom d0 = {bind=b0;unbind=ub0;colour="red"} // domain for U0 and L0
+dom d1 = {bind=b0;unbind=ub0;colour="blue"} // domain for U1 and L1
+dom dt01 = {bind=b0;unbind=ub0;colour="green"} // transition domain for U0 and L0
+dom dt1 = {bind=b0;unbind=ub0;colour="blue"} // transition domain for U1 and L1
+dom dr = {colour="gray"} // recognition domain
+
+def L0() = {dr* dt01^* d0^*}
+def L1() = {dr* dt1^* d1^*}
+def U0L0() = [dr dt01^ d0^]
+def U0L1() = [dr]<dt01^ d0^>{dt1^* d1^*}
+def U1L0() = [dr dt01^]<d1^>{d0^*}
+def U1L1() = [dr]<dt01^ d1^>{dt1^* d1^*}
+
+( 100 L0()
+| 100 L1()
+| 100 U0L0()
+| 100 U0L1()
+| 100 U1L0()
+| 100 U1L1()
+)
