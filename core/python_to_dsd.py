@@ -26,7 +26,7 @@ def render_species(species):
     '''
         Render the species from Random DNA Strand Circuit species
         Args:
-            species (list of str): all species in the Random DNA Strand Circuit
+            species (tuple of str): all species in the Random DNA Strand Circuit
         Returns:
             rendered_species (list of str): rendered visualDSD species in the S() format
     '''
@@ -134,8 +134,8 @@ def render_doubles(rendered_singles):
     rendered_doubles = []
     for rendered_upper in rendered_uppers:
         for rendered_lower in rendered_lowers:
-            upper_name = rendered_upper.split(' ')[1][:2]
-            lower_name = rendered_lower.split(' ')[1][:2]
+            upper_name = rendered_upper.split()[1][:2]
+            lower_name = rendered_lower.split()[1][:2]
             complex1 = ''
             complex2 = ''
             upper1 = ''
@@ -144,22 +144,22 @@ def render_doubles(rendered_singles):
             lower2 = ''
 
             # render tA and tB toehold domains
-            if rendered_upper.split(' ')[6] in rendered_lower.split(' ')[6]:
-                complex1 = rendered_upper.split(' ')[6]
+            if rendered_upper.split()[6] in rendered_lower.split()[6]:
+                complex1 = rendered_upper.split()[6]
             else:
-                upper1 = rendered_upper.split(' ')[6]
-                lower1 = rendered_lower.split(' ')[6]
+                upper1 = rendered_upper.split()[6]
+                lower1 = rendered_lower.split()[6]
 
             # render t0, t1, t2, etc. toehold domains
-            if rendered_upper.split(' ')[7] in rendered_lower.split(' ')[7]:
-                if rendered_upper.split(' ')[6] in rendered_lower.split(' ')[6]:
-                    complex2 = rendered_upper.split(' ')[7]
+            if rendered_upper.split()[7] in rendered_lower.split()[7]:
+                if rendered_upper.split()[6] in rendered_lower.split()[6]:
+                    complex2 = rendered_upper.split()[7]
                 else:
-                    upper2 = rendered_upper.split(' ')[7]
-                    lower2 = rendered_lower.split(' ')[7]
+                    upper2 = rendered_upper.split()[7]
+                    lower2 = rendered_lower.split()[7]
             else:
-                upper2 = rendered_upper.split(' ')[7]
-                lower2 = rendered_lower.split(' ')[7]
+                upper2 = rendered_upper.split()[7]
+                lower2 = rendered_lower.split()[7]
 
             rendered_doubles.append(f'def {upper_name}{lower_name}() = [main^ trans^ {complex1} {complex2}]<{upper1} {upper2}>{{{lower1} {lower2}}}')
 
@@ -205,10 +205,11 @@ def render_initial_conditions(initial_upper, initial_lower, initial_full, initia
         rendered_initial_conditions.append(f'{conp[0]} {partial}()')
     return rendered_initial_conditions
 
-def render_reactions(bind_reactions, displace_reactions):
+def render_reactions(species, bind_reactions, displace_reactions):
     '''
         Render the Visual DSD reactions and rates.
         Args:
+            species (tuple of str): all species in the Random DNA Strand Circuit
             bind_reactions (dict of str): for binding reactions, keys are reactions, values are rates
             displace_reactions (dict of str): for displacement reactions, keys are reactions, values are rates
         Returns:
@@ -219,6 +220,16 @@ def render_reactions(bind_reactions, displace_reactions):
         rendered_reactions.append(r_bind.replace('->', f'->{{{rate_bind[0]}}}'))
     for r_displace, rate_displace in displace_reactions.items():
         rendered_reactions.append(r_displace.replace('->', f'->{{{rate_displace[0]}}}'))
+
+    # add the () after species
+    for reaction_index in range(len(rendered_reactions)):
+        for sp in species:
+            if sp in rendered_reactions[reaction_index]:
+                rendered_reactions[reaction_index] = rendered_reactions[reaction_index].replace(sp, f'{sp}()')
+    # Remove unnecessary ()
+    for reaction_index in range(len(rendered_reactions)):
+        rendered_reactions[reaction_index] = rendered_reactions[reaction_index].replace('()L', 'L')
+
     return rendered_reactions
 
 def render_DSD_program(final, rendered_species, rendered_rates, rendered_domains, rendered_singles, 
@@ -274,6 +285,6 @@ if __name__ == '__main__':
     rendered_doubles, rendered_singles = render_doubles(rendered_singles=rendered_singles)
     rendered_initial_conditions = render_initial_conditions(initial_upper=conU, initial_lower=conL, 
                                                             initial_full=conF, initial_partial=conP)
-    rendered_reactions = render_reactions(bind_reactions=bind_reactions, displace_reactions=displace_reactions)
+    rendered_reactions = render_reactions(species=S, bind_reactions=bind_reactions, displace_reactions=displace_reactions)
     render_DSD_program(final, rendered_species, rendered_rates, rendered_domains, 
                        rendered_singles, rendered_doubles, rendered_initial_conditions, rendered_reactions)
