@@ -205,13 +205,15 @@ def render_initial_conditions(initial_upper, initial_lower, initial_full, initia
         rendered_initial_conditions.append(f'{conp[0]} {partial}()')
     return rendered_initial_conditions
 
-def render_reactions(species, bind_reactions, displace_reactions):
+def render_reactions(species, bind_reactions, displace_reactions, influx_reactions, efflux_reactions):
     '''
         Render the Visual DSD reactions and rates.
         Args:
             species (tuple of str): all species in the Random DNA Strand Circuit
             bind_reactions (dict of str): for binding reactions, keys are reactions, values are rates
             displace_reactions (dict of str): for displacement reactions, keys are reactions, values are rates
+            influx_reactions (dict of str): for influx reactions, keys are reactions, values are rates
+            efflux_reactions (dict of str): for efflux reactions, keys are reactions, values are rates
         Returns:
             rendered_reactions (list of str): list of rendered DSD reactions and rates
     '''
@@ -220,6 +222,10 @@ def render_reactions(species, bind_reactions, displace_reactions):
         rendered_reactions.append(r_bind.replace('->', f'->{{{rate_bind[0]}}}'))
     for r_displace, rate_displace in displace_reactions.items():
         rendered_reactions.append(r_displace.replace('->', f'->{{{rate_displace[0]}}}'))
+    for r_in, rate_in in influx_reactions.items():
+        rendered_reactions.append(r_in.replace('0 ->', f'->{{{rate_in[0]}}}'))
+    for r_out, rate_out in efflux_reactions.items():
+        rendered_reactions.append(r_out.replace('-> 0', f'->{{{rate_out[0]}}}'))
 
     # add the () after species
     for reaction_index in range(len(rendered_reactions)):
@@ -276,7 +282,8 @@ if __name__ == '__main__':
     conP = randomDNAChem.concentration_lookup['conP']
     bind_reactions = randomDNAChem.rateConst_lookup['rate_BIND']
     displace_reactions = randomDNAChem.rateConst_lookup['rate_DISPLACE']
-
+    influx_reactions = randomDNAChem.rateConst_lookup['rate_IN']
+    efflux_reactions = randomDNAChem.rateConst_lookup['rate_OUT']
     toeholds = get_toeholds(uppers=U, lowers=L)
     rendered_species = render_species(species=S)
     bind_list, unbind_list, rendered_rates = render_rates(toeholds=toeholds, base_bind=0.003, base_unbind=0.1)
@@ -285,6 +292,9 @@ if __name__ == '__main__':
     rendered_doubles, rendered_singles = render_doubles(rendered_singles=rendered_singles)
     rendered_initial_conditions = render_initial_conditions(initial_upper=conU, initial_lower=conL, 
                                                             initial_full=conF, initial_partial=conP)
-    rendered_reactions = render_reactions(species=S, bind_reactions=bind_reactions, displace_reactions=displace_reactions)
+    rendered_reactions = render_reactions(species=S, bind_reactions=bind_reactions, 
+                                          displace_reactions=displace_reactions, 
+                                          influx_reactions=influx_reactions, 
+                                          efflux_reactions=efflux_reactions)
     render_DSD_program(final, rendered_species, rendered_rates, rendered_domains, 
                        rendered_singles, rendered_doubles, rendered_initial_conditions, rendered_reactions)
