@@ -142,16 +142,25 @@ def render_doubles(rendered_singles):
             upper2 = ''
             lower1 = ''
             lower2 = ''
+
+            # render tA and tB toehold domains
             if rendered_upper.split(' ')[6] in rendered_lower.split(' ')[6]:
                 complex1 = rendered_upper.split(' ')[6]
             else:
                 upper1 = rendered_upper.split(' ')[6]
                 lower1 = rendered_lower.split(' ')[6]
+
+            # render t0, t1, t2, etc. toehold domains
             if rendered_upper.split(' ')[7] in rendered_lower.split(' ')[7]:
-                complex2 = rendered_upper.split(' ')[7]
+                if rendered_upper.split(' ')[6] in rendered_lower.split(' ')[6]:
+                    complex2 = rendered_upper.split(' ')[7]
+                else:
+                    upper2 = rendered_upper.split(' ')[7]
+                    lower2 = rendered_lower.split(' ')[7]
             else:
                 upper2 = rendered_upper.split(' ')[7]
                 lower2 = rendered_lower.split(' ')[7]
+
             rendered_doubles.append(f'def {upper_name}{lower_name}() = [main^ trans^ {complex1} {complex2}]<{upper1} {upper2}>{{{lower1} {lower2}}}')
 
     # clean up the rendered double strand strings
@@ -196,7 +205,24 @@ def render_initial_conditions(initial_upper, initial_lower, initial_full, initia
         rendered_initial_conditions.append(f'{conp[0]} {partial}()')
     return rendered_initial_conditions
 
-def render_DSD_program(final, rendered_species, rendered_rates, rendered_domains, rendered_singles, rendered_doubles, rendered_initial_conditions):
+def render_reactions(bind_reactions, displace_reactions):
+    '''
+        Render the Visual DSD reactions and rates.
+        Args:
+            bind_reactions (dict of str): for binding reactions, keys are reactions, values are rates
+            displace_reactions (dict of str): for displacement reactions, keys are reactions, values are rates
+        Returns:
+            rendered_reactions (list of str): list of rendered DSD reactions and rates
+    '''
+    rendered_reactions = []
+    for r_bind, rate_bind in bind_reactions.items():
+        rendered_reactions.append(r_bind.replace('->', f'->{{{rate_bind[0]}}}'))
+    for r_displace, rate_displace in displace_reactions.items():
+        rendered_reactions.append(r_displace.replace('->', f'->{{{rate_displace[0]}}}'))
+    return rendered_reactions
+
+def render_DSD_program(final, rendered_species, rendered_rates, rendered_domains, rendered_singles, 
+                       rendered_doubles, rendered_initial_conditions, rendered_reactions):
     '''
         Render the visual DSD program
         Args:
@@ -215,7 +241,8 @@ def render_DSD_program(final, rendered_species, rendered_rates, rendered_domains
         'rate_list': '; '.join(rendered_rates),
         'dom_list': '\n'.join(rendered_domains),
         'def_list': '\n'.join(rendered_modules),
-        'initial_cond_list': '\n| '.join(rendered_initial_conditions)
+        'initial_cond_list': '\n| '.join(rendered_initial_conditions),
+        'reaction_list': '\n| '.join(rendered_reactions)
     }
     with open('template.txt', 'r') as template_file:
         template_DSD = Template(template_file.read())
@@ -236,6 +263,8 @@ if __name__ == '__main__':
     conL = randomDNAChem.concentration_lookup['conL']
     conF = randomDNAChem.concentration_lookup['conF']
     conP = randomDNAChem.concentration_lookup['conP']
+    bind_reactions = randomDNAChem.rateConst_lookup['rate_BIND']
+    displace_reactions = randomDNAChem.rateConst_lookup['rate_DISPLACE']
 
     toeholds = get_toeholds(uppers=U, lowers=L)
     rendered_species = render_species(species=S)
@@ -245,5 +274,6 @@ if __name__ == '__main__':
     rendered_doubles, rendered_singles = render_doubles(rendered_singles=rendered_singles)
     rendered_initial_conditions = render_initial_conditions(initial_upper=conU, initial_lower=conL, 
                                                             initial_full=conF, initial_partial=conP)
+    rendered_reactions = render_reactions(bind_reactions=bind_reactions, displace_reactions=displace_reactions)
     render_DSD_program(final, rendered_species, rendered_rates, rendered_domains, 
-                       rendered_singles, rendered_doubles, rendered_initial_conditions)
+                       rendered_singles, rendered_doubles, rendered_initial_conditions, rendered_reactions)

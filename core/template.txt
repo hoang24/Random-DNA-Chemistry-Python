@@ -16,3 +16,5 @@ $def_list
 
 ( $initial_cond_list
 )
+
+| $reaction_list

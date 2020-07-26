@@ -287,7 +287,7 @@ class RandomDNAStrandDisplacementCircuit(object):
             for l in L:
                 ds_result = u + l
                 if ds_result in DS:
-                    R_bind = u + ' + ' + l + ' --> ' + ds_result
+                    R_bind = u + ' + ' + l + ' -> ' + ds_result
                     R_BIND.append(R_bind)
         R_BIND = tuple(R_BIND)
         nR_BIND = len(R_BIND)
@@ -319,7 +319,7 @@ class RandomDNAStrandDisplacementCircuit(object):
                     if result_ds in self.order_lookup.values(): # if the resulted double strand made out of the single strand and the reactant double strand exists
                         result_ds_order = self._get_key_by_value_from_dict(self.order_lookup, result_ds)
                         if result_ds_order > reactant_ds_order: # if the resulted double strand has higher order than the reactant double strand
-                            R_displace = reactant_ss + ' + ' + reactant_ds + ' --> ' + result_ds + ' + ' + result_ss
+                            R_displace = reactant_ss + ' + ' + reactant_ds + ' -> ' + result_ds + ' + ' + result_ss
                             R_DISPLACE.append(R_displace)
         R_DISPLACE = tuple(R_DISPLACE)
         nR_DISPLACE = len(R_DISPLACE)
@@ -337,7 +337,7 @@ class RandomDNAStrandDisplacementCircuit(object):
         '''
         R_IN = []
         for i in I:
-            R_in = '0 --> ' + i
+            R_in = '0 -> ' + i
             R_IN.append(R_in)
         R_IN = tuple(R_IN)
         nR_IN = len(R_IN)
@@ -355,7 +355,7 @@ class RandomDNAStrandDisplacementCircuit(object):
         '''
         R_OUT = []
         for o in O:
-            R_out = o + ' --> 0'
+            R_out = o + ' -> 0'
             R_OUT.append(R_out)
         R_OUT = tuple(R_OUT)
         nR_OUT = len(R_OUT)
