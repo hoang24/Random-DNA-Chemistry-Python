@@ -10,8 +10,8 @@ def load_chem_data(input_params, time_params):
     '''
         Load chemistry data and return 2 copies of time array and 2 copies of concentration dictionary
         Returns:
-            time_lookup (list): time array
-            concentration_lookup (list of dict): one for testset, one for trainset
+            time_lookup (list of float): time array
+            concentration_lookup (list of dict of float): one for testset, one for trainset
             randomDNAChem (class): original random DNA chemistry
     '''
 

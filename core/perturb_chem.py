@@ -120,7 +120,7 @@ class RandomDNAChemPerturbationGillespy2(gillespy2.Model):
                 if species2 == r_bind[5:7]:
                     bind_reactant2 = species2
             for species3 in self.listOfSpecies:
-                if species3 == r_bind[12:17]:
+                if species3 == r_bind[11:15]:
                     bind_product = species3
 
             gillespy2_bind = gillespy2.Reaction(name=r_bind, 
@@ -137,10 +137,10 @@ class RandomDNAChemPerturbationGillespy2(gillespy2.Model):
                 if species2 == r_displace[5:9]:
                     displace_reactant2 = species2
             for species3 in self.listOfSpecies:
-                if species3 == r_displace[14:18]:
+                if species3 == r_displace[13:17]:
                     displace_product1 = species3
             for species3 in self.listOfSpecies:
-                if species3 == r_displace[21:23]:
+                if species3 == r_displace[20:22]:
                     displace_product2 = species3
 
             gillespy2_displace = gillespy2.Reaction(name=r_displace, 
@@ -150,13 +150,13 @@ class RandomDNAChemPerturbationGillespy2(gillespy2.Model):
             gillespy2_reactions.append(gillespy2_displace)
 
         for i_in, r_in in enumerate(self.randomDNAChem.reaction_lookup['R_IN']):
-            if len(r_in) == 10:
+            if len(r_in) == 9:
                 for species1 in self.listOfSpecies:
-                    if species1 == r_in[6:10]:
+                    if species1 == r_in[5:9]:
                         in_product = species1
-            elif len(r_in) == 8:
+            elif len(r_in) == 7:
                 for species1 in self.listOfSpecies:
-                    if species1 == r_in[6:8]:
+                    if species1 == r_in[5:7]:
                         in_product = species1
             else:
                 raise BaseException
@@ -168,11 +168,11 @@ class RandomDNAChemPerturbationGillespy2(gillespy2.Model):
             gillespy2_reactions.append(gillespy2_in)
 
         for i_out, r_out in enumerate(self.randomDNAChem.reaction_lookup['R_OUT']):
-            if len(r_out) == 10:
+            if len(r_out) == 9:
                 for species1 in self.listOfSpecies:
                     if species1 == r_out[0:4]:
                         out_reactant = species1
-            elif len(r_out) == 8:
+            elif len(r_out) == 7:
                 for species1 in self.listOfSpecies:
                     if species1 == r_out[0:2]:
                         out_reactant = species1
