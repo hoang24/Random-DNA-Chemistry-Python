@@ -4,7 +4,15 @@ from string import Template
 
 
 class PythonToDSD():
-    def __init__(self, chemistry, initial, final, points):
+    def __init__(self, chemistry, initial, final, points, filename):
+        '''
+            chemistry (class): random DNA strand displacement circuit chemistry class
+            initial (float): start time of the simulation period
+            final (float): end time of the simulation period
+            points (float): number of datapoints in the simulation period
+            filename (str): location and name of the rendered Visual DSD file
+        '''
+
         S = chemistry.species_lookup['S']
         U = chemistry.species_lookup['U']
         L = chemistry.species_lookup['L']
@@ -30,7 +38,7 @@ class PythonToDSD():
                                               displace_reactions=displace_reactions, 
                                               influx_reactions=influx_reactions, 
                                               efflux_reactions=efflux_reactions)
-        self.render_DSD_program(initial, final, points, rendered_species, rendered_rates, rendered_domains, 
+        self.render_DSD_program(filename, initial, final, points, rendered_species, rendered_rates, rendered_domains, 
                            rendered_singles, rendered_doubles, rendered_initial_conditions, rendered_reactions)
 
 
@@ -269,7 +277,7 @@ class PythonToDSD():
 
         return rendered_reactions
 
-    def render_DSD_program(self, initial, final, points, rendered_species, rendered_rates, rendered_domains, rendered_singles, 
+    def render_DSD_program(self, filename, initial, final, points, rendered_species, rendered_rates, rendered_domains, rendered_singles, 
                            rendered_doubles, rendered_initial_conditions, rendered_reactions):
         '''
             Render the visual DSD program
@@ -297,10 +305,10 @@ class PythonToDSD():
         with open('template.txt', 'r') as template_file:
             template_DSD = Template(template_file.read())
         rendered_DSD = template_DSD.substitute(data_DSD)
-        with open('rendered.txt', 'w') as rendered_file:
+        with open(filename, 'w') as rendered_file:
             rendered_file.write(rendered_DSD)
 
 
 if __name__ == '__main__':
     randomDNAChem = RandomDNAStrandDisplacementCircuit(input_params=input_params, time_params=time_params)
-    PythonToDSD(chemistry=randomDNAChem, initial=0, final=1, points=1000)
+    PythonToDSD(chemistry=randomDNAChem, initial=0, final=1, points=1000, filename='visualDSD/rendered.txt')

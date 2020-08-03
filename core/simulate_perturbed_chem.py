@@ -85,7 +85,7 @@ def create_influx_lookup (randomDNAChem, num_time_element):
             time_lookup (list): time array from 0 to end of simulation time
 
         Returns:
-            influx_lookup (dict): dictionary for influx rate of each species with length of time_lookup list
+            influx_lookup (dict of list of float): dictionary for influx rate of each species with length of time_lookup list
                 {'species': [influx_rate (list)]}
     '''
 
