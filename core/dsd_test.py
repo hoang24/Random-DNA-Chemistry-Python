@@ -63,28 +63,32 @@ def generate_DSD(directory, chemistry, initial, final, past_result, run_index):
 
 if __name__ == '__main__':
 
+    directory = 'exp1'
+    try:
+        os.makedirs(f'visualDSD/{directory}')
+    except FileExistsError:
+        pass
+
     # Save Python results
     time_lookup, concentration_lookup, randomDNAChem = load_chem_data(input_params, time_params)
     pyResult = {**{'Time': time_lookup}, **concentration_lookup[0]} # append time list and concentration list together
     df_pyResult = pd.DataFrame(pyResult)
     df_pyResult.to_csv(f'visualDSD/{directory}/pyResult.csv', index=False)
-    df_influx = pd.DataFrame(chemistry.rateConst_lookup['rate_IN'])
+    df_influx = pd.DataFrame(randomDNAChem.rateConst_lookup['rate_IN'])
     df_influx.to_csv(f'visualDSD/{directory}/influx.csv', index=False)
 
     # Loop through the time_array and generate the Visual DSD script and save DSD results
     time_array = randomDNAChem.time_params['time_array']
     for index, (time1, time2) in enumerate(zip(time_array[:-1], time_array[1:])):
-        newDSDFile = generate_DSD(directory='exp1', chemistry=randomDNAChem, 
+        newDSDFile = generate_DSD(directory=directory, chemistry=randomDNAChem, 
                                   initial=time1, final=time2, 
                                   past_result=f'SimulationResult ({index-1})', run_index=index)
-
         print(f'"{newDSDFile}" file generated.')
         print(f'Step 1: Paste in Visual DSD, simulate, and download SimulationResult ({index}).csv')
         print(f'Step 2: Copy to visualDSD/{directory}/ directory.')
-
         first_while = True # print the waiting message once
         while not os.path.exists(f'visualDSD/{directory}/SimulationResult ({index}).csv'):
-            if first_run:
+            if first_while:
                 print(f'Waiting for "visualDSD/{directory}/SimulationResult ({index}).csv" file')
             first_while = False
         print(f'"visualDSD/{directory}/SimulationResult ({index}).csv" file found.\n')
