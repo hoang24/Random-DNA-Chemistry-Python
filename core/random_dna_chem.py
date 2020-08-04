@@ -639,3 +639,8 @@ class RandomDNAStrandDisplacementCircuit(object):
                 perturbation_lookup[time].update({r_in: rate_ins[time_index]})
 
         return perturbation_lookup
+
+
+if __name__ == '__main__':
+    from params import input_params1, time_params1
+    randDNAChem = RandomDNAStrandDisplacementCircuit(input_params1, time_params1)

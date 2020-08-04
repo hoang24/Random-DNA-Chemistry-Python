@@ -4,9 +4,11 @@ from string import Template
 
 
 class PythonToDSD():
-    def __init__(self, chemistry, initial, final, points, filename):
+    def __init__(self, chemistry, initial_conditions, influx_index, initial, final, points, filename):
         '''
             chemistry (class): random DNA strand displacement circuit chemistry class
+            initial_conditions (dict of int): initial number of species for a simulation period
+            influx_rates (dict of float): influx rates at a simulation period
             initial (float): start time of the simulation period
             final (float): end time of the simulation period
             points (float): number of datapoints in the simulation period
@@ -18,14 +20,14 @@ class PythonToDSD():
         L = chemistry.species_lookup['L']
         F = chemistry.species_lookup['F']
         P = chemistry.species_lookup['P']
-        conU = chemistry.concentration_lookup['conU']
-        conL = chemistry.concentration_lookup['conL']
-        conF = chemistry.concentration_lookup['conF']
-        conP = chemistry.concentration_lookup['conP']
-        bind_reactions = chemistry.rateConst_lookup['rate_BIND']
-        displace_reactions = chemistry.rateConst_lookup['rate_DISPLACE']
-        influx_reactions = chemistry.rateConst_lookup['rate_IN']
-        efflux_reactions = chemistry.rateConst_lookup['rate_OUT']
+        conU = initial_conditions['conU']
+        conL = initial_conditions['conL']
+        conF = initial_conditions['conF']
+        conP = initial_conditions['conP']
+        bind_rates = chemistry.rateConst_lookup['rate_BIND']
+        displace_rates = chemistry.rateConst_lookup['rate_DISPLACE']
+        influx_rates = chemistry.rateConst_lookup['rate_IN']
+        efflux_rates = chemistry.rateConst_lookup['rate_OUT']
         toeholds = self.get_toeholds(uppers=U, lowers=L)
         rendered_species = self.render_species(species=S)
         bind_list, unbind_list, rendered_rates = self.render_rates(toeholds=toeholds, base_bind=0.003, base_unbind=0.1)
@@ -33,13 +35,15 @@ class PythonToDSD():
         rendered_singles = self.render_singles(uppers=U, lowers=L, fulls=F)
         rendered_doubles, rendered_singles = self.render_doubles(rendered_singles=rendered_singles)
         rendered_initial_conditions = self.render_initial_conditions(initial_upper=conU, initial_lower=conL, 
-                                                                initial_full=conF, initial_partial=conP)
-        rendered_reactions = self.render_reactions(species=S, bind_reactions=bind_reactions, 
-                                              displace_reactions=displace_reactions, 
-                                              influx_reactions=influx_reactions, 
-                                              efflux_reactions=efflux_reactions)
+                                                                     initial_full=conF, initial_partial=conP)
+        rendered_reactions = self.render_reactions(species=S,
+                                                   bind_reactions=bind_rates,
+                                                   displace_reactions=displace_rates,
+                                                   influx_reactions=influx_rates,
+                                                   efflux_reactions=efflux_rates,
+                                                   influx_index=influx_index)
         self.render_DSD_program(filename, initial, final, points, rendered_species, rendered_rates, rendered_domains, 
-                           rendered_singles, rendered_doubles, rendered_initial_conditions, rendered_reactions)
+                                rendered_singles, rendered_doubles, rendered_initial_conditions, rendered_reactions)
 
 
     def get_toeholds(self, uppers, lowers):
@@ -244,7 +248,7 @@ class PythonToDSD():
             rendered_initial_conditions.append(f'{conp[0]} {partial}()')
         return rendered_initial_conditions
 
-    def render_reactions(self, species, bind_reactions, displace_reactions, influx_reactions, efflux_reactions):
+    def render_reactions(self, species, bind_reactions, displace_reactions, influx_reactions, efflux_reactions, influx_index):
         '''
             Render the Visual DSD reactions and rates.
             Args:
@@ -253,6 +257,7 @@ class PythonToDSD():
                 displace_reactions (dict of str): for displacement reactions, keys are reactions, values are rates
                 influx_reactions (dict of str): for influx reactions, keys are reactions, values are rates
                 efflux_reactions (dict of str): for efflux reactions, keys are reactions, values are rates
+                influx_index (int): index of the influx rate to use
             Returns:
                 rendered_reactions (list of str): list of rendered DSD reactions and rates
         '''
@@ -262,7 +267,7 @@ class PythonToDSD():
         for r_displace, rate_displace in displace_reactions.items():
             rendered_reactions.append(r_displace.replace('->', f'->{{{rate_displace[0]}}}'))
         for r_in, rate_in in influx_reactions.items():
-            rendered_reactions.append(r_in.replace('0 ->', f'->{{{rate_in[0]}}}'))
+            rendered_reactions.append(r_in.replace('0 ->', f'->{{{rate_in[influx_index]}}}'))
         for r_out, rate_out in efflux_reactions.items():
             rendered_reactions.append(r_out.replace('-> 0', f'->{{{rate_out[0]}}}'))
 
@@ -311,4 +316,8 @@ class PythonToDSD():
 
 if __name__ == '__main__':
     randomDNAChem = RandomDNAStrandDisplacementCircuit(input_params=input_params, time_params=time_params)
-    PythonToDSD(chemistry=randomDNAChem, initial=0, final=1, points=1000, filename='visualDSD/rendered.txt')
+
+    PythonToDSD(chemistry=randomDNAChem,
+                initial_conditions=randomDNAChem.concentration_lookup, 
+                influx_rates=randomDNAChem.rateConst_lookup['rate_IN'],
+                initial=0, final=1, points=1000, filename='visualDSD/rendered.txt')
