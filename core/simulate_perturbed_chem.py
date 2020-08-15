@@ -99,7 +99,7 @@ def create_influx_lookup (randomDNAChem, num_time_element):
 
     return influx_lookup
 
-def plot_concentration (time_lookup, concentration_lookup, show_title=False):
+def plot_concentration (time_lookup, concentration_lookup, show_title=False, plot_name=None):
     '''
         Method to plot concentration over time for a particular Gillespy2 trajectory
         Args:
@@ -140,14 +140,11 @@ def plot_concentration (time_lookup, concentration_lookup, show_title=False):
     by_label = OrderedDict(zip(labels, handles))
     ax.legend(by_label.values(), by_label.keys(), loc='best', fontsize=5, ncol=2, handlelength=1.0)
 
-    plot_name = 'species_plot_5baseIn_1tHold'
-    try:
-        plot_name
-    except NameError:
+    if plot_name == None:
         plt.show()
     else:
-        plt.savefig('plots/' + plot_name + '.png')
-        plt.savefig('plots/' + plot_name + '.eps')
+        plt.savefig(f'plots/{plot_name}.png')
+        plt.savefig(f'plots/{plot_name}.eps')
 
 def plot_influx (time_lookup, influx_lookup):
     '''
