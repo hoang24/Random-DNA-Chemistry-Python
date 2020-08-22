@@ -73,7 +73,7 @@ def create_time_concentration_lookup (traj_in_use, randomDNAChem, gillespy2_resu
         for time_index in range(1, randomDNAChem.time_params['num_perturb'] + 1): # concentration vector at perturbed period
             concentration_per_period = np.delete(gillespy2_results[time_index][traj_in_use][species_name], 0) # delete the 0th element since repeat
             concentrations += list(concentration_per_period)
-        concentration_lookup.update({'{}'.format(species_name): concentrations})
+        concentration_lookup.update({f'{species_name}': concentrations})
 
     return time_lookup, concentration_lookup
 
@@ -95,7 +95,7 @@ def create_influx_lookup (randomDNAChem, num_time_element):
         for ir in rate_in:
             influx_rate_per_reaction += [ir] * (num_time_element-1)
         influx_rate_per_reaction.append(influx_rate_per_reaction[-1])
-        influx_lookup.update({'{}'.format(r_in): influx_rate_per_reaction})
+        influx_lookup.update({f'{r_in}': influx_rate_per_reaction})
 
     return influx_lookup
 

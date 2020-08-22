@@ -27,11 +27,11 @@ num_exp = 20
 num_epoch = 10
 for input_param in input_params:
     for time_param in time_params:
-        print(colored('baseIn = {}; thold = {}'.format(input_param['theta_in']['mean'], time_param['t_hold']), 'white', 'on_red'))
+        print(colored(f'baseIn = {input_param['theta_in']['mean']}; thold = {time_param['t_hold']}', 'white', 'on_red'))
         NRMSE_per_exp = []
         fitness_per_exp = []
         for i in range(num_exp):
-            print(colored('Exp #{}'.format(i+1), 'white', 'on_green'))
+            print(colored(f'Exp #{i+1}', 'white', 'on_green'))
             NRMSE, fitness = short_term_memory(input_params=input_param, time_params=time_param, num_epoch=num_epoch)
             NRMSE_per_exp.append(NRMSE)            
             fitness_per_exp.append(fitness)
@@ -46,10 +46,10 @@ df_NRMSE = pd.DataFrame({'input range (species/sec)': base_influx_list,
                          'tau (sec)': hold_time_list,                                                                                  
                          'NRMSE_means': NRMSE_means,
                          'NRMSE_stds': NRMSE_stds})
-df_NRMSE.to_csv('dat/ST_NRMSE_{}ep_{}ex.csv'.format(num_epoch, num_exp), index=False)
+df_NRMSE.to_csv(f'dat/ST_NRMSE_{num_epoch}ep_{num_exp}ex.csv', index=False)
 
 df_fitness = pd.DataFrame({'input range (species/sec)': base_influx_list,                                                                                  
                            'tau (sec)': hold_time_list,                                                                                  
                            'fitness_means': fitness_means,
                            'fitness_stds': fitness_stds})
-df_fitness.to_csv('dat/ST_fitness_{}ep_{}ex.csv'.format(num_epoch, num_exp), index=False)
+df_fitness.to_csv(f'dat/ST_fitness_{num_epoch}ep_{num_exp}ex.csv', index=False)

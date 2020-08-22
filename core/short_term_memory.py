@@ -19,8 +19,8 @@ def short_term_memory(input_params, time_params, num_epoch, plot_chem=False, err
 
 
     # Create trainset and testset
-    trainset = create_trainset(concentration_lookup=concentration_lookup)
-    testset = create_testset(concentration_lookup=concentration_lookup)
+    trainset = create_trainset(concentration_lookup=concentration_lookup[0])
+    testset = create_testset(concentration_lookup=concentration_lookup[1])
     if len(trainset) != len(testset):
         raise BaseException
 
@@ -37,7 +37,7 @@ def short_term_memory(input_params, time_params, num_epoch, plot_chem=False, err
         ST_target_per_reaction = []
         for ir_index in range(2, len(time_lookup) + 1): # from index 2 to index end+1
             ST_target_per_reaction.append(rate_in[ir_index - 1] + 2*rate_in[ir_index - 2])
-        ST_lookup.update({'{}'.format(r_in): ST_target_per_reaction})
+        ST_lookup.update({f'{r_in}': ST_target_per_reaction})
 
     for reaction, influx in ST_lookup.items():
         scale_factor = max(influx) / 1 # scale the influx value between 0 and 1
@@ -51,7 +51,7 @@ def short_term_memory(input_params, time_params, num_epoch, plot_chem=False, err
     # Training
     print('Training model: ')
     for species, concentration in trainset.items():
-        trainset.update({'{}'.format(species): concentration[2:]})
+        trainset.update({f'{species}': concentration[2:]})
     train_target = ST_target_list[0][:-1]
     losses, outputs = train_readout(readout=readout, trainset=trainset, target=train_target, epochs=num_epoch, device=device)
 
@@ -107,7 +107,7 @@ def short_term_memory(input_params, time_params, num_epoch, plot_chem=False, err
     # Testing
     print('Testing model: ')
     for species, concentration in testset.items():
-        testset.update({'{}'.format(species): concentration[2:]})
+        testset.update({f'{species}': concentration[2:]})
     test_target = ST_target_list[0][:-1]
     final_accuracy = test_readout(readout=readout, testset=testset, target=test_target, device=device)
 

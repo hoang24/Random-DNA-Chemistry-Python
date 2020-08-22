@@ -19,8 +19,8 @@ def long_term_memory(input_params, time_params, num_epoch, plot_chem=False, erro
 
 
     # Create trainset and testset
-    trainset = create_trainset(concentration_lookup=concentration_lookup)
-    testset = create_testset(concentration_lookup=concentration_lookup)
+    trainset = create_trainset(concentration_lookup=concentration_lookup[0])
+    testset = create_testset(concentration_lookup=concentration_lookup[1])
     if len(trainset) != len(testset):
         raise BaseException
 

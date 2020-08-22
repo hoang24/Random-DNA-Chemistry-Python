@@ -37,12 +37,12 @@ def create_trainset(concentration_lookup):
     '''
         Creating the trainset
         Args:
-            concentration_lookup (list of dict)
+            concentration_lookup (dict of float)
         Returns:
-            trainset (dict)
+            trainset (dict of float)
     '''
 
-    trainset = copy.deepcopy(concentration_lookup[0]) # trainset is a scaled concentration lookup
+    trainset = copy.deepcopy(concentration_lookup) # trainset is a scaled concentration lookup
     for species_name, concentration in trainset.items():
         scale_factor = max(concentration) / 1 # scale the concentration value between 0 and 1
         for i in range(len(concentration)):
@@ -53,12 +53,12 @@ def create_testset(concentration_lookup):
     '''
         Creating the trainset
         Args:
-            concentration_lookup (list of dict)
+            concentration_lookup (dict of float)
         Returns:
-            testset (dict)
+            testset (dict of float)
     '''
 
-    testset = copy.deepcopy(concentration_lookup[1]) # testset is a scaled concentration lookup
+    testset = copy.deepcopy(concentration_lookup) # testset is a scaled concentration lookup
     for species_name, concentration in testset.items():
         scale_factor = max(concentration) / 1 # scale the concentration value between 0 and 1
         for i in range(len(concentration)):
