@@ -4,7 +4,7 @@ directive simulation {
     points=$points;
     plots=[$species_list];
 }
-directive simulator stochastic
+directive simulator lna
 directive parameters [$rate_list]
 directive compilation infinite
 
