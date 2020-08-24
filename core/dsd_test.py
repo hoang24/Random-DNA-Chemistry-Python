@@ -3,6 +3,7 @@ import pandas as pd
 import os
 from readout_utils import load_chem_data
 from params_dsd import input_params, time_params
+import pickle
 
 
 def generate_DSD(directory, chemistry, initial, final, past_result, run_index):
@@ -63,7 +64,7 @@ def generate_DSD(directory, chemistry, initial, final, past_result, run_index):
 
 if __name__ == '__main__':
 
-    directory = 'exp1'
+    directory = 'exp2'
     try:
         os.makedirs(f'visualDSD/{directory}')
     except FileExistsError:
@@ -71,6 +72,8 @@ if __name__ == '__main__':
 
     # Save Python results
     time_lookup, concentration_lookup, randomDNAChem = load_chem_data(input_params, time_params)
+    with open(f'visualDSD/{directory}/chemistry.pickle', 'wb') as f:
+        pickle.dump(randomDNAChem, f)
     pyResult = {**{'Time': time_lookup}, **concentration_lookup[0]} # append time list and concentration list together
     df_pyResult = pd.DataFrame(pyResult)
     df_pyResult.to_csv(f'visualDSD/{directory}/pyResult.csv', index=False)
