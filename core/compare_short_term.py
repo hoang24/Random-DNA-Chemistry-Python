@@ -1,6 +1,5 @@
-from simulate_perturbed_chem import create_influx_lookup
-from readout_utils import create_trainset, create_testset, analyze_error
-from readout_layer import ReadOutLayer, train_readout, test_readout
+import readout_utils as utils
+import readout_layer as rlayer
 import torch
 import numpy as np
 import pandas as pd
@@ -39,7 +38,7 @@ class ShortTermMemoryTask():
         self.target = self.create_target()
 
         # Create trainset and training
-        self.trainset = self.create_trainset(concentration_lookup=self.concentration_lookup)
+        self.trainset = utils.create_trainset(concentration_lookup=self.concentration_lookup)
         self.NRMSE = self.train()
 
     def load_result(self):
@@ -55,25 +54,28 @@ class ShortTermMemoryTask():
         return time_lookup, concentration_lookup
 
     def create_readout(self, num_species):
-        readout = ReadOutLayer(numIn=num_species)
+        readout = rlayer.ReadOutLayer(numIn=num_species)
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         return readout, device
 
     def create_target(self):
-        # Load influx
+        # Load influx and create look up dictionary for influx with the same length as the time array
         df_influx = pd.read_csv(f'visualDSD/{self.directory}/influx.csv', engine='python')
-        influx_lookup = df_influx.to_dict('list')
+        original_influx_lookup = df_influx.to_dict('list')
+        influx_lookup = original_influx_lookup.copy()
+        for r_in, rate_in in original_influx_lookup.items():
+            influx_rate_per_reaction = []
+            for ir in rate_in:
+                influx_rate_per_reaction += [ir] * (len(self.time_lookup)-1)
+            influx_rate_per_reaction.append(influx_rate_per_reaction[-1])
+            influx_lookup.update({f'{r_in}': influx_rate_per_reaction})
 
         # Make a look up dictionary for target of the Short Term Memory task
         target_lookup = influx_lookup.copy()
         for r_in, rate_in in target_lookup.items():
             target_per_reaction = []
             for ir_index in range(2, len(self.time_lookup) + 1): # from index 2 to index end+1
-                try:
-                    target_per_reaction.append(rate_in[ir_index - 1] + 2*rate_in[ir_index - 2])
-                except IndexError:
-                    import pdb; pdb.set_trace()                    
-
+                target_per_reaction.append(rate_in[ir_index - 1] + 2*rate_in[ir_index - 2])
             target_lookup.update({f'{r_in}': target_per_reaction})
 
         # Convert dict to list for the targets
@@ -89,14 +91,14 @@ class ShortTermMemoryTask():
     def train(self):
         for species, concentration in self.trainset.items():
             self.trainset.update({f'{species}': concentration[2:]})
-        losses, outputs = train_readout(readout=self.readout, 
+        losses, outputs = rlayer.train_readout(readout=self.readout, 
                                         trainset=self.trainset, 
                                         target=self.target[0][:-1], 
                                         epochs=self.num_epoch, 
                                         device=self.device)
 
         # Performance analysis
-        _, NRMSE_per_epoch, _, _ = analyze_error(losses=losses, num_epoch=self.num_epoch)
+        _, NRMSE_per_epoch, _, _ = utils.analyze_error(losses=losses, num_epoch=self.num_epoch)
         return NRMSE_per_epoch[-1]
 
 if __name__ == '__main__':

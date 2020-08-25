@@ -1,9 +1,11 @@
 from python_to_dsd import PythonToDSD
 import pandas as pd
 import os
-from readout_utils import load_chem_data
+from random_dna_chem import RandomDNAStrandDisplacementCircuit
+from simulate_perturbed_chem import simulate_chem, create_time_concentration_lookup
 from params_dsd import input_params, time_params
 import pickle
+import numpy as np
 
 
 def generate_DSD(directory, chemistry, initial, final, past_result, run_index):
@@ -61,6 +63,42 @@ def generate_DSD(directory, chemistry, initial, final, past_result, run_index):
 
     return filename
 
+def load_chem_data(chemistry, num_trajectories):
+    '''
+        Load chemistry data and return 2 copies of time array and 2 copies of concentration dictionary
+        Returns:
+            time_lookup (list of float): time array
+            concentration_lookup (list of dict of float): one for testset, one for trainset
+            randomDNAChem (class): original random DNA chemistry
+    '''
+    gillespy2_results = simulate_chem(num_trajectories=num_trajectories, num_time_element=1001, randomDNAChem=chemistry)
+
+    time_list = []
+    concentration_list = []
+    for traj in range(num_trajectories):
+        time, concentrations = create_time_concentration_lookup(traj_in_use=traj,
+                                                               randomDNAChem=randomDNAChem,
+                                                               gillespy2_results=gillespy2_results)
+        time = np.array(time)
+        time_list.append(time)
+        for key in concentrations.keys():
+            concentrations[key] = np.array(concentrations[key])
+        concentration_list.append(concentrations)
+
+    # Averaging over num_trajectories
+    time_avg = sum(time_list) / num_trajectories
+    concentration_avg = {}
+    for key in concentration_list[0].keys():
+        concentration_avg.update({key: []})
+
+    for key in concentration_avg.keys():
+        concentration_values = []
+        for traj in range(num_trajectories):
+            concentration_values.append(concentration_list[traj][key])
+        concentration_avg[key] = sum(concentration_values) / num_trajectories
+
+    return time_avg, concentration_avg
+
 
 if __name__ == '__main__':
 
@@ -70,11 +108,14 @@ if __name__ == '__main__':
     except FileExistsError:
         pass
 
-    # Save Python results
-    time_lookup, concentration_lookup, randomDNAChem = load_chem_data(input_params, time_params)
+    # Generate chemistry and save to a pickle file
+    randomDNAChem = RandomDNAStrandDisplacementCircuit(input_params=input_params, time_params=time_params)
     with open(f'visualDSD/{directory}/chemistry.pickle', 'wb') as f:
         pickle.dump(randomDNAChem, f)
-    pyResult = {**{'Time': time_lookup}, **concentration_lookup[0]} # append time list and concentration list together
+
+    # Save Python results
+    time_lookup, concentration_lookup = load_chem_data(chemistry=randomDNAChem, num_trajectories=10)
+    pyResult = {**{'Time': time_lookup}, **concentration_lookup} # append time list and concentration list together
     df_pyResult = pd.DataFrame(pyResult)
     df_pyResult.to_csv(f'visualDSD/{directory}/pyResult.csv', index=False)
     df_influx = pd.DataFrame(randomDNAChem.rateConst_lookup['rate_IN'])

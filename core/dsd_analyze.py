@@ -5,7 +5,7 @@ import pandas as pd
 from simulate_perturbed_chem import plot_concentration
 
 
-directory = 'exp1'
+directory = 'exp2'
 
 df_dsdResult = pd.read_csv(f'visualDSD/{directory}/dsdResult.csv', engine='python')
 dsdResult = df_dsdResult.to_dict('list')
@@ -65,8 +65,8 @@ for dsdKey, pyKey in zip(dsdConcentration.keys(), pyConcentration.keys()):
     # Generate plots
     plt.plot(dsdTime, dsdValue, ':', color='red', label=f'DSD Result: {dsdKey}')
     plt.plot(pyTime, pyValue, ':', color='blue', label=f'Python Result: {pyKey}')
-    plt.plot(pyTime, fit_curveD, '--', color='black', label=f'Fit Curve using Exponential Decay (Decreasing Form)')
-    plt.plot(pyTime, fit_curveI, '--', color='purple', label=f'Fit Curve using Exponential Decay (Increasing Form)')
+    # plt.plot(pyTime, fit_curveD, '--', color='black', label=f'Fit Curve using Exponential Decay (Decreasing Form)')
+    # plt.plot(pyTime, fit_curveI, '--', color='purple', label=f'Fit Curve using Exponential Decay (Increasing Form)')
     # plt.yscale('log')
     plt.title('Species Count of DSD and Python Results and Fit Curve')
     plt.xlabel('Time (s)')
@@ -75,12 +75,12 @@ for dsdKey, pyKey in zip(dsdConcentration.keys(), pyConcentration.keys()):
     plt.show()
 
     # Comparison
-    diff_py_dsd_D = fit_curveD - pyValue
-    diff_py_dsd_I = fit_curveI - pyValue
-    plt.plot(pyTime, diff_py_dsd_D, '--', color='black', label='Error using Exponential Decay (Decreasing Form) Fit Curve')
-    plt.plot(pyTime, diff_py_dsd_I, '--', color='purple', label='Error using Exponential Decay (Increasing Form) Fit Curve')
-    plt.title('Difference of Python Result to DSD Result')
-    plt.xlabel('Time (s)')
-    plt.ylabel('Species Count (species)')
-    plt.legend()
-    plt.show()
+    # diff_py_dsd_D = fit_curveD - pyValue
+    # diff_py_dsd_I = fit_curveI - pyValue
+    # plt.plot(pyTime, diff_py_dsd_D, '--', color='black', label='Error using Exponential Decay (Decreasing Form) Fit Curve')
+    # plt.plot(pyTime, diff_py_dsd_I, '--', color='purple', label='Error using Exponential Decay (Increasing Form) Fit Curve')
+    # plt.title('Difference of Python Result to DSD Result')
+    # plt.xlabel('Time (s)')
+    # plt.ylabel('Species Count (species)')
+    # plt.legend()
+    # plt.show()
