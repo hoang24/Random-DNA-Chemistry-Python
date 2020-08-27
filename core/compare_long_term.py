@@ -125,5 +125,7 @@ if __name__ == '__main__':
     long_term_dsd = LongTermMemoryTask(directory=directory, result_name='dsdResult', num_epoch=epochs, t_hold=t_hold)
 
     # Get long-term memory task errors for DSD and Python results
-    print(f'NRMSE of DSD results: {long_term_dsd.NRMSE} at length {len(long_term_dsd.time_lookup)}')
-    print(f'NRMSE of Python results: {long_term_python.NRMSE} at length {len(long_term_python.time_lookup)}')
+    print(f'NRMSE of DSD results: {long_term_dsd.NRMSE}')
+    print(f'NRMSE of Python results: {long_term_python.NRMSE}')
+    with open(f'visualDSD/{directory}/long_NRMSE.txt', 'w') as f:
+        f.write(f'{long_term_dsd.NRMSE},{long_term_python.NRMSE}')

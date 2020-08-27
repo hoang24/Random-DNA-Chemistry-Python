@@ -25,8 +25,8 @@ from collections import OrderedDict
 
 
 plt.rc('font', family='serif')
-plt.rc('xtick', labelsize='x-large')
-plt.rc('ytick', labelsize='x-large')
+plt.rc('xtick', labelsize='large')
+plt.rc('ytick', labelsize='large')
 fig = plt.figure(figsize=(4, 3))
 ax = fig.add_subplot(1, 1, 1)
 
@@ -41,5 +41,5 @@ ax_NRMSE.legend(loc='best', handlelength=2.0, framealpha=0.5, fontsize='x-large'
 ax_NRMSE.set_xlabel('CRN Model', fontfamily='serif', fontsize='xx-large')
 ax_NRMSE.set_ylabel('NRMSE', fontsize='xx-large')
 plt.tight_layout()
-plt.savefig('plots/model_comparison.png')
-plt.savefig('plots/model_comparison.eps')
+plt.savefig('plots/model_comparison_2020.png')
+plt.savefig('plots/model_comparison_2020.eps')
