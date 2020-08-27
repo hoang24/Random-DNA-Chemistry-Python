@@ -102,7 +102,7 @@ def load_chem_data(chemistry, num_trajectories):
 
 if __name__ == '__main__':
 
-    directory = 'exp2'
+    directory = 'exp1'
     try:
         os.makedirs(f'visualDSD/{directory}')
     except FileExistsError:

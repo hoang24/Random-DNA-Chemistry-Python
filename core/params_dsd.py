@@ -8,7 +8,7 @@ input_params = {
     'n': 9, # Number of single strands [5, 10)
     'p': 0.846, # ratio of upper to lower strands [0.5, 1)
     'y': 0.214, # ratio of upper strands with complements [0, 1)
-    'a_in': 0.222, # ratio of influces to the overall number of strands [0, 1)
+    'a_in': 1/9, # ratio of influces to the overall number of strands [0, 1)
     'a_out': 0.0193, # ratio of outfluces to the overall number of strands [0, 1)
     'theta': { # (positive) normal distribution of rate constants
         'mean': 0.148, # [0.05, 0.2)

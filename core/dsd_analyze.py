@@ -5,7 +5,7 @@ import pandas as pd
 from simulate_perturbed_chem import plot_concentration
 
 
-directory = 'exp2'
+directory = 'exp1'
 
 df_dsdResult = pd.read_csv(f'visualDSD/{directory}/dsdResult.csv', engine='python')
 dsdResult = df_dsdResult.to_dict('list')

@@ -3,7 +3,7 @@ import pandas as pd
 import pickle
 
 
-directory = 'exp2'
+directory = 'exp1'
 with open(f'visualDSD/{directory}/chemistry.pickle','rb') as f:
     randDNAChem = pickle.load(f)
 
