@@ -65,8 +65,8 @@ for dsdKey, pyKey in zip(dsdConcentration.keys(), pyConcentration.keys()):
     # Generate plots
     plt.plot(dsdTime, dsdValue, ':', color='red', label=f'DSD Result: {dsdKey}')
     plt.plot(pyTime, pyValue, ':', color='blue', label=f'Python Result: {pyKey}')
-    # plt.plot(pyTime, fit_curveD, '--', color='black', label=f'Fit Curve using Exponential Decay (Decreasing Form)')
-    # plt.plot(pyTime, fit_curveI, '--', color='purple', label=f'Fit Curve using Exponential Decay (Increasing Form)')
+    plt.plot(pyTime, fit_curveD, '--', color='black', label=f'Fit Curve using Exponential Decay (Decreasing Form)')
+    plt.plot(pyTime, fit_curveI, '--', color='purple', label=f'Fit Curve using Exponential Decay (Increasing Form)')
     # plt.yscale('log')
     plt.title('Species Count of DSD and Python Results and Fit Curve')
     plt.xlabel('Time (s)')
@@ -75,12 +75,26 @@ for dsdKey, pyKey in zip(dsdConcentration.keys(), pyConcentration.keys()):
     plt.show()
 
     # Comparison
-    # diff_py_dsd_D = fit_curveD - pyValue
-    # diff_py_dsd_I = fit_curveI - pyValue
-    # plt.plot(pyTime, diff_py_dsd_D, '--', color='black', label='Error using Exponential Decay (Decreasing Form) Fit Curve')
-    # plt.plot(pyTime, diff_py_dsd_I, '--', color='purple', label='Error using Exponential Decay (Increasing Form) Fit Curve')
-    # plt.title('Difference of Python Result to DSD Result')
-    # plt.xlabel('Time (s)')
-    # plt.ylabel('Species Count (species)')
-    # plt.legend()
-    # plt.show()
+    expType = input('Enter type of Exponential Fit ([i]ncreasing or [d]ecreasing): ')
+    if expType in ['i', 'inc', 'increase', 'increasing']:
+        diff_py_dsd_I = fit_curveI - pyValue
+        plt.plot(dsdTime, dsdValue, ':', color='red', label=f'VisualDSD Model: {dsdKey}')
+        plt.plot(pyTime, pyValue, ':', color='blue', label=f'Abstract Model: {pyKey}')
+        plt.plot(pyTime, diff_py_dsd_I, '--', color='purple', label=f'Error: {pyKey}')
+        plt.xlabel('Time (s)')
+        plt.ylabel('Species Count (species)')
+        plt.legend()
+        plt.show()
+    elif expType in ['d', 'dec', 'decrease', 'decreasing']:
+        diff_py_dsd_D = fit_curveD - pyValue
+        plt.plot(dsdTime, dsdValue, ':', color='red', label=f'Visual DSD Model: {dsdKey}')
+        plt.plot(pyTime, pyValue, ':', color='blue', label=f'Abstract Model: {pyKey}')
+        plt.plot(pyTime, diff_py_dsd_D, '--', color='purple', label=f'Error: {pyKey}')
+        plt.xlabel('Time (s)')
+        plt.ylabel('Species Count (species)')
+        plt.legend()
+        plt.show()
+    else:
+        raise Exception('Unknown values')
+    # plt.savefig(f'visualDSD/{directory}/comparison_{pyKey}.png')
+
