@@ -8,6 +8,15 @@ import pickle
 import numpy as np
 
 
+"""
+    Perform the following steps in a loop until finish
+    1. (script) Generate visual DSD script based on random params in params_dsd.py
+    2. (user) Paste in Visual DSD, simulate, and download SimulationResult ("{index}").csv
+    3. (user) Copy SimulationResult ("{index}").csv to visualDSD/"tau_{t_hold}"/"exp{index}"/ directory.')
+    4. (script) Idle until the SimulationResult ("{index}").csv is found.
+    5. (script) Using the number of species at the end of the previous SimulationResult ("{index}").csv to generate the next visual DSD script (step 1)
+"""
+
 def generate_DSD(directory, chemistry, initial, final, past_result, run_index):
     '''
         directory (str): name of the directory to save .txt and .csv files in
@@ -102,9 +111,9 @@ def load_chem_data(chemistry, num_trajectories):
 
 if __name__ == '__main__':
 
-    directory = 'exp1'
+    directory = os.path.join('tau_{}/'.format(time_params['t_hold']), 'exp1')
     try:
-        os.makedirs(f'visualDSD/{directory}')
+        os.makedirs(f'visualDSD/{directory}/')
     except FileExistsError:
         pass
 

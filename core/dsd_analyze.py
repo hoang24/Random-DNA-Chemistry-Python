@@ -3,9 +3,10 @@ from scipy.optimize import curve_fit
 from matplotlib import pyplot as plt
 import pandas as pd
 from simulate_perturbed_chem import plot_concentration
+from params_dsd import input_params, time_params
 
 
-directory = 'exp1'
+directory = os.path.join('tau_{}/'.format(time_params['t_hold']), 'exp1')
 
 df_dsdResult = pd.read_csv(f'visualDSD/{directory}/dsdResult.csv', engine='python')
 dsdResult = df_dsdResult.to_dict('list')
@@ -34,6 +35,9 @@ def exp_decay_increase(time, final, rate_const):
     species_count = final * (1 - np.exp(-rate_const*time))
     return species_count
 
+
+diff_mean = {}
+diff_std = {}
 for dsdKey, pyKey in zip(dsdConcentration.keys(), pyConcentration.keys()):
     # Convert the concentration data to numpy array
     dsdValue = np.array(dsdConcentration[dsdKey])
@@ -78,23 +82,30 @@ for dsdKey, pyKey in zip(dsdConcentration.keys(), pyConcentration.keys()):
     expType = input('Enter type of Exponential Fit ([i]ncreasing or [d]ecreasing): ')
     if expType in ['i', 'inc', 'increase', 'increasing']:
         diff_py_dsd_I = fit_curveI - pyValue
-        plt.plot(dsdTime, dsdValue, ':', color='red', label=f'VisualDSD Model: {dsdKey}')
-        plt.plot(pyTime, pyValue, ':', color='blue', label=f'Abstract Model: {pyKey}')
-        plt.plot(pyTime, diff_py_dsd_I, '--', color='purple', label=f'Error: {pyKey}')
-        plt.xlabel('Time (s)')
-        plt.ylabel('Species Count (species)')
-        plt.legend()
-        plt.show()
+        # plt.plot(dsdTime, dsdValue, ':', color='red', label=f'VisualDSD Model: {dsdKey}')
+        # plt.plot(pyTime, pyValue, ':', color='blue', label=f'Abstract Model: {pyKey}')
+        # plt.plot(pyTime, diff_py_dsd_I, '--', color='purple', label=f'Error: {pyKey}')
+        # plt.xlabel('Time (s)')
+        # plt.ylabel('Species Count (species)')
+        # plt.legend()
+        # plt.show()
+        diff_mean.update( {dsdKey: np.mean(diff_py_dsd_I)} )
+        diff_std.update( {dsdKey: np.std(diff_py_dsd_I)} )
     elif expType in ['d', 'dec', 'decrease', 'decreasing']:
         diff_py_dsd_D = fit_curveD - pyValue
-        plt.plot(dsdTime, dsdValue, ':', color='red', label=f'Visual DSD Model: {dsdKey}')
-        plt.plot(pyTime, pyValue, ':', color='blue', label=f'Abstract Model: {pyKey}')
-        plt.plot(pyTime, diff_py_dsd_D, '--', color='purple', label=f'Error: {pyKey}')
-        plt.xlabel('Time (s)')
-        plt.ylabel('Species Count (species)')
-        plt.legend()
-        plt.show()
+        # plt.plot(dsdTime, dsdValue, ':', color='red', label=f'Visual DSD Model: {dsdKey}')
+        # plt.plot(pyTime, pyValue, ':', color='blue', label=f'Abstract Model: {pyKey}')
+        # plt.plot(pyTime, diff_py_dsd_D, '--', color='purple', label=f'Error: {pyKey}')
+        # plt.xlabel('Time (s)')
+        # plt.ylabel('Species Count (species)')
+        # plt.legend()
+        # plt.show()
+        diff_mean.update( {dsdKey: np.mean(diff_py_dsd_D)} )
+        diff_std.update( {dsdKey: np.std(diff_py_dsd_D)} )
     else:
         raise Exception('Unknown values')
     # plt.savefig(f'visualDSD/{directory}/comparison_{pyKey}.png')
 
+print('Error between Abstract and Visual DSD Model')
+for mean_key, std_key in zip(diff_mean.keys(), diff_std.keys()):
+    print(f'{mean_key}: {diff_mean[mean_key]} + {diff_std[std_key]}')
