@@ -1,0 +1,102 @@
+directive simulation {
+    initial=0.61;
+    final=0.9099999999999999;
+    points=1001;
+    plots=[U0(); U1(); U2(); U3(); L0(); L1(); L2(); L3(); L4(); U3L3(); U0L3(); U0L4(); U0L1(); U1L2(); U1L4(); U2L4(); U2L0(); U2L3(); U3L2(); U3L0()];
+}
+directive simulator lna
+directive parameters [k0=0.003; u0=0.1; k1=0.003; u1=0.1; k2=0.003; u2=0.1; k3=0.003; u3=0.1; k4=0.003; u4=0.1]
+directive compilation infinite
+
+dom main = {bind=0.003; unbind=0.1; colour="black"} // main domain
+dom trans = {bind=0.003; unbind=0.1; colour="purple"} // transition domain
+dom tA = {bind=0.003; unbind=0.1; colour="lime"} // toehold A domain
+dom tB = {bind=0.003; unbind=0.1; colour="cyan"} // toehold B domain
+dom t0 = {bind=k0; unbind=u0}
+dom t1 = {bind=k1; unbind=u1}
+dom t2 = {bind=k2; unbind=u2}
+dom t3 = {bind=k3; unbind=u3}
+dom t4 = {bind=k4; unbind=u4}
+
+def U3() = <main^ trans^ tA^ t3^>
+def L3() = {main^* trans^* tA^* t3^*}
+def U0() = <main^ trans^ tA^ t0^>
+def U1() = <main^ trans^ tB^ t1^>
+def U2() = <main^ trans^ tA^ t2^>
+def L0() = {main^* trans^* tB^* t0^*}
+def L1() = {main^* trans^* tA^* t1^*}
+def L2() = {main^* trans^* tB^* t2^*}
+def L4() = {main^* trans^* tA^* t4^*}
+def U3L3() = [main^ trans^ tA^ t3^]
+def U3L0() = [main^ trans^]<tA^ t3^>{tB^* t0^*}
+def U3L1() = [main^ trans^ tA^]<t3^>{t1^*}
+def U3L2() = [main^ trans^]<tA^ t3^>{tB^* t2^*}
+def U3L4() = [main^ trans^ tA^]<t3^>{t4^*}
+def U0L3() = [main^ trans^ tA^]<t0^>{t3^*}
+def U0L0() = [main^ trans^]<tA^ t0^>{tB^* t0^*}
+def U0L1() = [main^ trans^ tA^]<t0^>{t1^*}
+def U0L2() = [main^ trans^]<tA^ t0^>{tB^* t2^*}
+def U0L4() = [main^ trans^ tA^]<t0^>{t4^*}
+def U1L3() = [main^ trans^]<tB^ t1^>{tA^* t3^*}
+def U1L0() = [main^ trans^ tB^]<t1^>{t0^*}
+def U1L1() = [main^ trans^]<tB^ t1^>{tA^* t1^*}
+def U1L2() = [main^ trans^ tB^]<t1^>{t2^*}
+def U1L4() = [main^ trans^]<tB^ t1^>{tA^* t4^*}
+def U2L3() = [main^ trans^ tA^]<t2^>{t3^*}
+def U2L0() = [main^ trans^]<tA^ t2^>{tB^* t0^*}
+def U2L1() = [main^ trans^ tA^]<t2^>{t1^*}
+def U2L2() = [main^ trans^]<tA^ t2^>{tB^* t2^*}
+def U2L4() = [main^ trans^ tA^]<t2^>{t4^*}
+
+( 1.426605346132672e-19 U0()
+| 1.4097825489844548e-29 U1()
+| 4.058359036565739e-31 U2()
+| 4.8664273169144523e-32 U3()
+| 243.16632222284085 L0()
+| 3.843571354711783e-06 L1()
+| 654.9768666470495 L2()
+| 5.931064282690181e-22 L3()
+| 328.8570547683275 L4()
+| 1138.4715039225935 U3L3()
+| 699.9505284515793 U0L3()
+| 519.132119219959 U0L4()
+| 1530.416981942479 U0L1()
+| 591.0435537866417 U1L2()
+| 8.307230900160876e-06 U1L4()
+| 25.449578866116184 U2L4()
+| 987.4156073931945 U2L0()
+| 6.246330536409625e-23 U2L3()
+| 0.2811154555737555 U3L2()
+| 448.80005598980176 U3L0()
+| U0() + L1() ->{0.08884657928041019} U0L1()
+| U0() + L3() ->{0.11154750094092014} U0L3()
+| U0() + L4() ->{0.15646365452058078} U0L4()
+| U1() + L2() ->{0.24197530883359988} U1L2()
+| U1() + L4() ->{0.040602481548445396} U1L4()
+| U2() + L0() ->{0.2088816019908556} U2L0()
+| U2() + L3() ->{0.1697179897588795} U2L3()
+| U2() + L4() ->{0.17149344318652981} U2L4()
+| U3() + L0() ->{0.20299595317950983} U3L0()
+| U3() + L2() ->{0.34380587962133163} U3L2()
+| U3() + L3() ->{0.08361555315718402} U3L3()
+| U0() + U2L3() ->{0.010734836102077566} U0L3() + U2()
+| U1() + U0L4() ->{0.2520656771456803} U1L4() + U0()
+| U1() + U3L2() ->{0.17759883598010176} U1L2() + U3()
+| U2() + U0L4() ->{0.1260999458958813} U2L4() + U0()
+| U2() + U1L4() ->{0.23407621368566187} U2L4() + U1()
+| U3() + U2L3() ->{0.19425692281774642} U3L3() + U2()
+| U3() + U2L0() ->{0.13362644076546512} U3L0() + U2()
+| U3() + U0L3() ->{0.07732462598321564} U3L3() + U0()
+| L0() + U2L3() ->{0.33454131043259633} U2L0() + L3()
+| L0() + U3L2() ->{0.07545569231338548} U3L0() + L2()
+| L0() + U2L4() ->{0.16902197408137853} U2L0() + L4()
+| L1() + U0L4() ->{0.14913237620442188} U0L1() + L4()
+| L2() + U1L4() ->{0.07902919173090392} U1L2() + L4()
+| L3() + U0L4() ->{0.06665932758365266} U0L3() + L4()
+| L3() + U3L2() ->{0.16673764122612814} U3L3() + L2()
+| L3() + U0L1() ->{0.04157338433189374} U0L3() + L1()
+| L3() + U3L0() ->{0.09110006587292399} U3L3() + L0()
+| L4() + U2L3() ->{0.22769122771778094} U2L4() + L3()
+| ->{0.00017023057690752834} L1()
+| ->{0.0005372495316717278} U1L4()
+)
