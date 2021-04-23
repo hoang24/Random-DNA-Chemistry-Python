@@ -1,5 +1,6 @@
 import numpy as np
 from params_dsd import input_params, time_params
+import os
 
 
 """
@@ -7,7 +8,7 @@ from params_dsd import input_params, time_params
     Then calculate the means and stds for both tasks of both models
 """
 
-tau_dir = f'tau_{time_params['t_hold']}'
+tau_dir = 'tau_{}'.format(time_params['t_hold'])
 
 dsd_NRMSE_short = []
 py_NRMSE_short = []
@@ -46,3 +47,18 @@ py_std_long = np.std(py_NRMSE_long)
 print('Long-term Memory Task:')
 print(f'Abstract Model: {py_mean_long} +/- {py_std_long}')
 print(f'DSD Model: {dsd_mean_long} +/- {dsd_std_long}')
+
+with open(f'visualDSD/{tau_dir}/task_results.txt', 'w') as f:
+    f.write(f'DSD Model: NRMSE for Short-term Memory Task = {dsd_NRMSE_short}\n')
+    f.write(f'Abstract Model: NRMSE for Short-term Memory Task = {py_NRMSE_short}\n')
+    f.write(f'DSD Model: NRMSE for Long-term Memory Task = {dsd_NRMSE_long}\n')
+    f.write(f'Abstract Model: NRMSE for Long-term Memory Task = {py_NRMSE_long}\n')
+    f.write('\n')
+    f.write('Short-term Memory Task:\n')
+    f.write(f'Abstract Model: {py_mean_short} +/- {py_std_short}\n')
+    f.write(f'DSD Model: {dsd_mean_short} +/- {dsd_std_short}\n')
+    f.write('\n')
+    f.write('Long-term Memory Task:\n')
+    f.write(f'Abstract Model: {py_mean_long} +/- {py_std_long}\n')
+    f.write(f'DSD Model: {dsd_mean_long} +/- {dsd_std_long}\n')
+    f.write('\n')

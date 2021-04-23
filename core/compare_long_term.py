@@ -4,7 +4,8 @@ import torch
 import numpy as np
 import pandas as pd
 import pickle
-from params_dsd import input_params, time_params
+import os
+from params_dsd import input_params, time_params, exp
 
 
 """
@@ -119,7 +120,7 @@ class LongTermMemoryTask():
         return NRMSE_per_epoch[-1]
 
 if __name__ == '__main__':
-    directory = os.path.join('tau_{}/'.format(time_params['t_hold']), 'exp1')
+    directory = os.path.join('tau_{}/'.format(time_params['t_hold']), exp)
     epochs = 10
     with open(f'visualDSD/{directory}/chemistry.pickle', 'rb') as f:
         randomDNAChem = pickle.load(f)

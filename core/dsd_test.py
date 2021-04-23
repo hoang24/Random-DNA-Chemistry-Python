@@ -3,7 +3,7 @@ import pandas as pd
 import os
 from random_dna_chem import RandomDNAStrandDisplacementCircuit
 from simulate_perturbed_chem import simulate_chem, create_time_concentration_lookup
-from params_dsd import input_params, time_params
+from params_dsd import input_params, time_params, exp
 import pickle
 import numpy as np
 
@@ -110,8 +110,7 @@ def load_chem_data(chemistry, num_trajectories):
 
 
 if __name__ == '__main__':
-
-    directory = os.path.join('tau_{}/'.format(time_params['t_hold']), 'exp1')
+    directory = os.path.join('tau_{}/'.format(time_params['t_hold']), exp)
     try:
         os.makedirs(f'visualDSD/{directory}/')
     except FileExistsError:
