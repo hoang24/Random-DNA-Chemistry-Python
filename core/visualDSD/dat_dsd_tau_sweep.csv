@@ -1,0 +1,13 @@
+﻿tau (sec),Time-series Task,NRMSE_means,NRMSE_stds
+0.1,Short-term Memory Task,0.100630632,0.043176441
+0.1,Long-term Memory Task,0.083812922,0.031941244
+0.2,Short-term Memory Task,0.116151187,0.062865368
+0.2,Long-term Memory Task,0.109826006,0.054207741
+0.3,Short-term Memory Task,0.138711237,0.096122668
+0.3,Long-term Memory Task,0.144183171,0.082297847
+0.4,Short-term Memory Task,0.154497241,0.052098577
+0.4,Long-term Memory Task,0.120133737,0.053369488
+0.5,Short-term Memory Task,0.121474805,0.043130625
+0.5,Long-term Memory Task,0.141063186,0.066995755
+0.6,Short-term Memory Task,0.134453314,0.08540546
+0.6,Long-term Memory Task,0.116218802,0.022688386
