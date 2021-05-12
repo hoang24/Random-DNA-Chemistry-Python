@@ -5,5 +5,5 @@ CRN Model,Task,NRMSE_mean,NRMSE_stds
 2018 (Yahiro),Long-term Memory Task,0.13,0.036
 2020 (Nguyen),Short-term Memory Task,0.0416,0.0072
 2020 (Nguyen),Long-term Memory Task,0.0427,0.0085
-Our Model,Short-term Memory Task,0.05,0.0072
-Our Model,Long-term Memory Task,0.05,0.0085
+Our Model,Short-term Memory Task,0.1006,0.0432
+Our Model,Long-term Memory Task,0.0838,0.0319

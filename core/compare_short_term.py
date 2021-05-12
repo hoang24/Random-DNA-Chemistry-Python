@@ -3,7 +3,13 @@ import readout_layer as rlayer
 import torch
 import numpy as np
 import pandas as pd
+import os
+from params_dsd import input_params, time_params, exp
 
+
+"""
+    Script to calculate the NRMSE of the Python and DSD model for the short-term memory task and store in visualDSD/tau_{t_hold}/exp{index}/short_NRMSE.txt
+"""
 
 class ShortTermMemoryTask():
 
@@ -102,7 +108,7 @@ class ShortTermMemoryTask():
         return NRMSE_per_epoch[-1]
 
 if __name__ == '__main__':
-    directory = 'exp1'
+    directory = os.path.join('tau_{}/'.format(time_params['t_hold']), exp)
     epochs = 10
 
     # Short-term Memory class for DSD and Python results

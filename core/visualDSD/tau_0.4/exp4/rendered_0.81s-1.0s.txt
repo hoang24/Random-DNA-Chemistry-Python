@@ -1,0 +1,91 @@
+directive simulation {
+    initial=0.81;
+    final=1.0;
+    points=1001;
+    plots=[U0(); U1(); U2(); U3(); L0(); L1(); L2(); L3(); L4(); U0L0(); U0L4(); U1L3(); U1L4(); U2L2(); U2L3(); U2L0(); U3L0(); U3L1()];
+}
+directive simulator lna
+directive parameters [k0=0.003; u0=0.1; k1=0.003; u1=0.1; k2=0.003; u2=0.1; k3=0.003; u3=0.1; k4=0.003; u4=0.1]
+directive compilation infinite
+
+dom main = {bind=0.003; unbind=0.1; colour="black"} // main domain
+dom trans = {bind=0.003; unbind=0.1; colour="purple"} // transition domain
+dom tA = {bind=0.003; unbind=0.1; colour="lime"} // toehold A domain
+dom tB = {bind=0.003; unbind=0.1; colour="cyan"} // toehold B domain
+dom t0 = {bind=k0; unbind=u0}
+dom t1 = {bind=k1; unbind=u1}
+dom t2 = {bind=k2; unbind=u2}
+dom t3 = {bind=k3; unbind=u3}
+dom t4 = {bind=k4; unbind=u4}
+
+def U0() = <main^ trans^ tA^ t0^>
+def L0() = {main^* trans^* tA^* t0^*}
+def U1() = <main^ trans^ tA^ t1^>
+def U2() = <main^ trans^ tB^ t2^>
+def U3() = <main^ trans^ tA^ t3^>
+def L1() = {main^* trans^* tB^* t1^*}
+def L2() = {main^* trans^* tA^* t2^*}
+def L3() = {main^* trans^* tB^* t3^*}
+def L4() = {main^* trans^* tA^* t4^*}
+def U0L0() = [main^ trans^ tA^ t0^]
+def U0L1() = [main^ trans^]<tA^ t0^>{tB^* t1^*}
+def U0L2() = [main^ trans^ tA^]<t0^>{t2^*}
+def U0L3() = [main^ trans^]<tA^ t0^>{tB^* t3^*}
+def U0L4() = [main^ trans^ tA^]<t0^>{t4^*}
+def U1L0() = [main^ trans^ tA^]<t1^>{t0^*}
+def U1L1() = [main^ trans^]<tA^ t1^>{tB^* t1^*}
+def U1L2() = [main^ trans^ tA^]<t1^>{t2^*}
+def U1L3() = [main^ trans^]<tA^ t1^>{tB^* t3^*}
+def U1L4() = [main^ trans^ tA^]<t1^>{t4^*}
+def U2L0() = [main^ trans^]<tB^ t2^>{tA^* t0^*}
+def U2L1() = [main^ trans^ tB^]<t2^>{t1^*}
+def U2L2() = [main^ trans^]<tB^ t2^>{tA^* t2^*}
+def U2L3() = [main^ trans^ tB^]<t2^>{t3^*}
+def U2L4() = [main^ trans^]<tB^ t2^>{tA^* t4^*}
+def U3L0() = [main^ trans^ tA^]<t3^>{t0^*}
+def U3L1() = [main^ trans^]<tA^ t3^>{tB^* t1^*}
+def U3L2() = [main^ trans^ tA^]<t3^>{t2^*}
+def U3L3() = [main^ trans^]<tA^ t3^>{tB^* t3^*}
+def U3L4() = [main^ trans^ tA^]<t3^>{t4^*}
+
+( 5.696187798539086e-21 U0()
+| 4.3535746212624664e-09 U1()
+| 2.8409478684746096e-07 U2()
+| 7.839577528780215e-06 U3()
+| 3.5170113181043555e-16 L0()
+| 81.06657978647694 L1()
+| 34.264954289129115 L2()
+| 334.4381530493651 L3()
+| 115.23017357165163 L4()
+| 237.8891124974894 U0L0()
+| 846.4634795012038 U0L4()
+| 707.600456053495 U1L3()
+| 3.2009271462648927 U1L4()
+| 1104.8706763103771 U2L2()
+| 453.9545151098057 U2L3()
+| 1.6241976211396155e-16 U2L0()
+| 567.4817025494735 U3L0()
+| 419.33254918749606 U3L1()
+| U0() + L0() ->{0.17706647293296773} U0L0()
+| U0() + L4() ->{0.11028603106935299} U0L4()
+| U1() + L3() ->{0.1511359217607839} U1L3()
+| U1() + L4() ->{0.052251754055298444} U1L4()
+| U2() + L0() ->{0.20747677814801874} U2L0()
+| U2() + L2() ->{0.3117080951138697} U2L2()
+| U2() + L3() ->{0.23264991772824734} U2L3()
+| U3() + L0() ->{0.07189794851005574} U3L0()
+| U3() + L1() ->{0.19033219235632337} U3L1()
+| U0() + U2L0() ->{0.16807695722965127} U0L0() + U2()
+| U0() + U1L4() ->{0.030887963058409268} U0L4() + U1()
+| U0() + U3L0() ->{0.1026337071189651} U0L0() + U3()
+| U1() + U2L3() ->{0.17319998992026908} U1L3() + U2()
+| U3() + U2L0() ->{0.207977932621743} U3L0() + U2()
+| L0() + U3L1() ->{0.21420358829331926} U3L0() + L1()
+| L0() + U0L4() ->{0.004684255014975297} U0L0() + L4()
+| L2() + U2L0() ->{0.15113500608936226} U2L2() + L0()
+| L2() + U2L3() ->{0.08001222655703036} U2L2() + L3()
+| L3() + U2L0() ->{0.18632886963949186} U2L3() + L0()
+| L3() + U1L4() ->{0.2343021192033421} U1L3() + L4()
+| ->{0.0004108049781729605} U1L4()
+| ->{0.00022126057369802193} U3()
+)

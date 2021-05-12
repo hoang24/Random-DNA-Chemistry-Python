@@ -34,3 +34,5 @@ time_params = {
     't_perturb': 0.01, # time to start perturbing the chemistry
     't_hold': 0.10, # input hold time (time delay between each perturbation)
 }
+
+exp = 'exp1'
