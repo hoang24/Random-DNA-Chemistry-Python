@@ -5,10 +5,8 @@ directive simulation {
     plots=[$species_list];
 }
 directive simulator lna
-directive parameters [$rate_list]
 directive compilation infinite
 
-dom main = {bind=0.003; unbind=0.1; colour="black"} // main domain
 $dom_list
 
 $def_list
