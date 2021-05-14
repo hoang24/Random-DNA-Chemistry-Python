@@ -499,7 +499,7 @@ class RandomDSDChemistry():
 
 
 if __name__ == '__main__':
-    from params import input_params, time_params
+    from params_dsd import input_params, time_params
     import code
 
     dsd = RandomDSDChemistry(input_params=input_params, time_params=time_params)

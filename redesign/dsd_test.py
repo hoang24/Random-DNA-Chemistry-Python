@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 from random_dsd_chem import RandomDSDChemistry
 from dsd_rendering import DSDRenderProgram
-from params import input_params, time_params, exp
+from params_dsd import input_params, time_params, exp
 
 
 """

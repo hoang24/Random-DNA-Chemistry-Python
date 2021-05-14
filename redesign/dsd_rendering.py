@@ -171,7 +171,7 @@ class DSDRenderProgram():
             rendered_file.write(self.rendered_DSD)
 
 if __name__ == '__main__':
-    from params import input_params, time_params
+    from params_dsd import input_params, time_params
     from random_dsd_chem import RandomDSDChemistry
     import code
 

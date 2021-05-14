@@ -1,0 +1,172 @@
+directive simulation {
+    initial=0.7100000000000001;
+    final=0.81;
+    points=1001;
+    plots=[U0(); U1(); U2(); U3(); L0(); L1(); L2(); L3(); L4(); U0L0(); U1L1(); U0L1(); U0L2(); U0L3(); U1L0(); U1L2(); U1L3(); U2L4(); U3L4(); U0L4(); U1L4(); U2L0(); U2L1(); U2L2(); U2L3(); U3L0(); U3L1(); U3L2(); U3L3()];
+}
+directive simulator lna
+directive compilation infinite
+
+dom M = {bind=0.003; unbind=0.1; colour="black"} // main domain
+dom A = {bind=0.003; unbind=0.1} // switching domain
+dom B = {bind=0.003; unbind=0.1} // switching domain
+dom t0 = {bind=0.003; unbind=0.1} // identity domain
+dom t1 = {bind=0.003; unbind=0.1} // identity domain
+dom t2 = {bind=0.003; unbind=0.1} // identity domain
+dom t3 = {bind=0.003; unbind=0.1} // identity domain
+dom t4 = {bind=0.003; unbind=0.1} // identity domain
+
+def U0() = <M^ M^ B^ t0^> // upper strand
+def U1() = <M^ M^ B^ t1^> // upper strand
+def U2() = <M^ M^ A^ t2^> // upper strand
+def U3() = <M^ M^ A^ t3^> // upper strand
+def L0() = {M^* M^* B^* t0^*} // lower strand
+def L1() = {M^* M^* B^* t1^*} // lower strand
+def L2() = {M^* M^* B^* t2^*} // lower strand
+def L3() = {M^* M^* B^* t3^*} // lower strand
+def L4() = {M^* M^* A^* t4^*} // lower strand
+def U0L0() = [M^ M^ B^ t0^] // full double strand
+def U1L1() = [M^ M^ B^ t1^] // full double strand
+def U0L1() = [M^ M^ B^]<t0^>{t1^*} // strong (2/3) partial double strand
+def U0L2() = [M^ M^ B^]<t0^>{t2^*} // strong (2/3) partial double strand
+def U0L3() = [M^ M^ B^]<t0^>{t3^*} // strong (2/3) partial double strand
+def U1L0() = [M^ M^ B^]<t1^>{t0^*} // strong (2/3) partial double strand
+def U1L2() = [M^ M^ B^]<t1^>{t2^*} // strong (2/3) partial double strand
+def U1L3() = [M^ M^ B^]<t1^>{t3^*} // strong (2/3) partial double strand
+def U2L4() = [M^ M^ A^]<t2^>{t4^*} // strong (2/3) partial double strand
+def U3L4() = [M^ M^ A^]<t3^>{t4^*} // strong (2/3) partial double strand
+def U0L4() = [M^ M^]<B^ t0^>{A^* t4^*} // weak (1/3) partial double strand
+def U1L4() = [M^ M^]<B^ t1^>{A^* t4^*} // weak (1/3) partial double strand
+def U2L0() = [M^ M^]<A^ t2^>{B^* t0^*} // weak (1/3) partial double strand
+def U2L1() = [M^ M^]<A^ t2^>{B^* t1^*} // weak (1/3) partial double strand
+def U2L2() = [M^ M^]<A^ t2^>{B^* t2^*} // weak (1/3) partial double strand
+def U2L3() = [M^ M^]<A^ t2^>{B^* t3^*} // weak (1/3) partial double strand
+def U3L0() = [M^ M^]<A^ t3^>{B^* t0^*} // weak (1/3) partial double strand
+def U3L1() = [M^ M^]<A^ t3^>{B^* t1^*} // weak (1/3) partial double strand
+def U3L2() = [M^ M^]<A^ t3^>{B^* t2^*} // weak (1/3) partial double strand
+def U3L3() = [M^ M^]<A^ t3^>{B^* t3^*} // weak (1/3) partial double strand
+
+( 4.45803078520284e-05 U0()
+| 2.4857416561312838e-05 U1()
+| 0.08808252616651359 U2()
+| 2.441604355035694 U3()
+| 0.001104148470323128 L0()
+| 0.0008649889668762545 L1()
+| 22.59915511863466 L2()
+| 11.908873058994565 L3()
+| 0.003387295812277624 L4()
+| 715.6502372758416 U0L0()
+| 1753.523060909197 U1L1()
+| 311.7326766683805 U0L1()
+| 298.1769739071214 U0L2()
+| 835.4076364271145 U0L3()
+| 382.6008343377221 U1L0()
+| 873.1360277872362 U1L2()
+| 854.6588494641263 U1L3()
+| 1826.3234298315713 U2L4()
+| 767.5199526376728 U3L4()
+| 0.21521872990096744 U0L4()
+| 0.011297641949325374 U1L4()
+| 396.453772923599 U2L0()
+| 100.67925355852422 U2L1()
+| 431.0671648074892 U2L2()
+| 456.2769001673069 U2L3()
+| 130.8341369471614 U3L0()
+| 184.43865234818944 U3L1()
+| 53.64931746153578 U3L2()
+| 408.97806871245115 U3L3()
+| U0() + L0() ->{0.20585620408185434} U0L0() // binding reaction
+| U1() + L1() ->{0.13967668432592625} U1L1() // binding reaction
+| U0() + L1() ->{0.06570990195456612} U0L1() // binding reaction
+| U0() + L2() ->{0.14330679283670714} U0L2() // binding reaction
+| U0() + L3() ->{0.11320080243893324} U0L3() // binding reaction
+| U1() + L0() ->{0.1619953847337106} U1L0() // binding reaction
+| U1() + L2() ->{0.10922198986056715} U1L2() // binding reaction
+| U1() + L3() ->{0.18528485694137195} U1L3() // binding reaction
+| U2() + L4() ->{0.18958034023561626} U2L4() // binding reaction
+| U3() + L4() ->{0.09925478424186301} U3L4() // binding reaction
+| U0() + L4() ->{0.21401424473582203} U0L4() // binding reaction
+| U1() + L4() ->{0.15498456616103448} U1L4() // binding reaction
+| U2() + L0() ->{0.07695027902952851} U2L0() // binding reaction
+| U2() + L1() ->{0.15824696781153197} U2L1() // binding reaction
+| U2() + L2() ->{0.19918144671868182} U2L2() // binding reaction
+| U2() + L3() ->{0.18629356562222604} U2L3() // binding reaction
+| U3() + L0() ->{0.18554598346939832} U3L0() // binding reaction
+| U3() + L1() ->{0.19328539238563297} U3L1() // binding reaction
+| U3() + L2() ->{0.04591626040297209} U3L2() // binding reaction
+| U3() + L3() ->{0.17828060060796058} U3L3() // binding reaction
+| U0() + U1L0() ->{0.17417880779243622} U1() + U0L0() // displacement reaction
+| U0() + U2L0() ->{0.2179184762460119} U2() + U0L0() // displacement reaction
+| U0() + U2L1() ->{0.2626545510241521} U2() + U0L1() // displacement reaction
+| U0() + U2L2() ->{0.23667607738558463} U2() + U0L2() // displacement reaction
+| U0() + U2L3() ->{0.061914162193491606} U2() + U0L3() // displacement reaction
+| U0() + U3L0() ->{0.15496370472106671} U3() + U0L0() // displacement reaction
+| U0() + U3L1() ->{0.08405763978813185} U3() + U0L1() // displacement reaction
+| U0() + U3L2() ->{0.11256458583371681} U3() + U0L2() // displacement reaction
+| U0() + U3L3() ->{0.18170172491432104} U3() + U0L3() // displacement reaction
+| U1() + U0L1() ->{0.1902997792608056} U0() + U1L1() // displacement reaction
+| U1() + U2L0() ->{0.1782453434528729} U2() + U1L0() // displacement reaction
+| U1() + U2L1() ->{0.16817452337348782} U2() + U1L1() // displacement reaction
+| U1() + U2L2() ->{0.09064308486851994} U2() + U1L2() // displacement reaction
+| U1() + U2L3() ->{0.02073869763787345} U2() + U1L3() // displacement reaction
+| U1() + U3L0() ->{0.10627504958569584} U3() + U1L0() // displacement reaction
+| U1() + U3L1() ->{0.18822612739212002} U3() + U1L1() // displacement reaction
+| U1() + U3L2() ->{0.15219987604156315} U3() + U1L2() // displacement reaction
+| U1() + U3L3() ->{0.22836526730535456} U3() + U1L3() // displacement reaction
+| U2() + U0L4() ->{0.17156215904340286} U0() + U2L4() // displacement reaction
+| U2() + U1L4() ->{0.2108570414899848} U1() + U2L4() // displacement reaction
+| U3() + U0L4() ->{0.026831987530306647} U0() + U3L4() // displacement reaction
+| U3() + U1L4() ->{0.19262414535617528} U1() + U3L4() // displacement reaction
+| L0() + U0L1() ->{0.14025107158187594} L1() + U0L0() // displacement reaction
+| L0() + U0L2() ->{0.08062435860875426} L2() + U0L0() // displacement reaction
+| L0() + U0L3() ->{0.1854647073530459} L3() + U0L0() // displacement reaction
+| L0() + U0L4() ->{0.2379226418445526} L4() + U0L0() // displacement reaction
+| L0() + U1L4() ->{0.1137988787099419} L4() + U1L0() // displacement reaction
+| L1() + U1L0() ->{0.2042319842153931} L0() + U1L1() // displacement reaction
+| L1() + U1L2() ->{0.16017074052702365} L2() + U1L1() // displacement reaction
+| L1() + U1L3() ->{0.10840946384023208} L3() + U1L1() // displacement reaction
+| L1() + U0L4() ->{0.16088486147881098} L4() + U0L1() // displacement reaction
+| L1() + U1L4() ->{0.11742795462343192} L4() + U1L1() // displacement reaction
+| L2() + U0L4() ->{0.08073503054312267} L4() + U0L2() // displacement reaction
+| L2() + U1L4() ->{0.14794802234943413} L4() + U1L2() // displacement reaction
+| L3() + U0L4() ->{0.20168279016557839} L4() + U0L3() // displacement reaction
+| L3() + U1L4() ->{0.1409699925517994} L4() + U1L3() // displacement reaction
+| L4() + U2L0() ->{0.08724427106935842} L0() + U2L4() // displacement reaction
+| L4() + U2L1() ->{0.24817558108029905} L1() + U2L4() // displacement reaction
+| L4() + U2L2() ->{0.02370946683877251} L2() + U2L4() // displacement reaction
+| L4() + U2L3() ->{0.22788541679466884} L3() + U2L4() // displacement reaction
+| L4() + U3L0() ->{0.12753708326198526} L0() + U3L4() // displacement reaction
+| L4() + U3L1() ->{0.2115764472347676} L1() + U3L4() // displacement reaction
+| L4() + U3L2() ->{0.2622288685519176} L2() + U3L4() // displacement reaction
+| L4() + U3L3() ->{0.11293673562774634} L3() + U3L4() // displacement reaction
+| ->{0.00020795631801474846} U2() // influx reaction
+| U0() ->{0.00041243298412135105} // efflux reaction
+| U1() ->{0.00037417230709164485} // efflux reaction
+| U2() ->{0.000257987967611723} // efflux reaction
+| U3() ->{0.0003920716929394377} // efflux reaction
+| L0() ->{0.0003216657421731897} // efflux reaction
+| L1() ->{0.0004114253212852885} // efflux reaction
+| L2() ->{0.0006761119355069015} // efflux reaction
+| L3() ->{0.0004217799244546428} // efflux reaction
+| L4() ->{7.758019605090545e-05} // efflux reaction
+| U0L0() ->{0.0007613133590099175} // efflux reaction
+| U1L1() ->{0.0004097986807983036} // efflux reaction
+| U0L1() ->{0.00011418030569357413} // efflux reaction
+| U0L2() ->{0.0004123237746754037} // efflux reaction
+| U0L3() ->{0.000543219850792876} // efflux reaction
+| U1L0() ->{0.00015080561058957196} // efflux reaction
+| U1L2() ->{0.00031119802366140633} // efflux reaction
+| U1L3() ->{0.0005341656111743618} // efflux reaction
+| U2L4() ->{0.0006800921950008212} // efflux reaction
+| U3L4() ->{8.54807480490999e-05} // efflux reaction
+| U0L4() ->{0.00017712429872925224} // efflux reaction
+| U1L4() ->{0.0007457881193726137} // efflux reaction
+| U2L0() ->{1.49589591169261e-06} // efflux reaction
+| U2L1() ->{0.0007321045999449535} // efflux reaction
+| U2L2() ->{0.0002235716190014447} // efflux reaction
+| U2L3() ->{0.00034832960218841836} // efflux reaction
+| U3L0() ->{0.0003762800849833473} // efflux reaction
+| U3L1() ->{0.00028694215883967643} // efflux reaction
+| U3L2() ->{0.0002421251712379551} // efflux reaction
+| U3L3() ->{1.5520136523216493e-05} // efflux reaction
+)
