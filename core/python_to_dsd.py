@@ -8,7 +8,7 @@ class PythonToDSD():
         '''
             chemistry (class): random DNA strand displacement circuit chemistry class
             initial_conditions (dict of int): initial number of species for a simulation period
-            influx_rates (dict of float): influx rates at a simulation period
+            influx_index (int): index of perturbation period
             initial (float): start time of the simulation period
             final (float): end time of the simulation period
             points (float): number of datapoints in the simulation period
@@ -312,12 +312,3 @@ class PythonToDSD():
         rendered_DSD = template_DSD.substitute(data_DSD)
         with open(filename, 'w') as rendered_file:
             rendered_file.write(rendered_DSD)
-
-
-if __name__ == '__main__':
-    randomDNAChem = RandomDNAStrandDisplacementCircuit(input_params=input_params, time_params=time_params)
-
-    PythonToDSD(chemistry=randomDNAChem,
-                initial_conditions=randomDNAChem.concentration_lookup, 
-                influx_rates=randomDNAChem.rateConst_lookup['rate_IN'],
-                initial=0, final=1, points=1000, filename='visualDSD/rendered.txt')

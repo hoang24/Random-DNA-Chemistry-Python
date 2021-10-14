@@ -23,6 +23,13 @@ from collections import OrderedDict
 #         'NRMSE_stds': NRMSE_stds
 #     })
 
+dat_name = 'model_comparison'
+plot_name = 'model_comparison_2021'
+xlabel = 'CRN Model'
+
+# dat_name = 'Chris_ONN'
+# plot_name = 'Chris_ONN_results'
+# xlabel = 'Reservoir Size'
 
 plt.rc('font', family='serif')
 plt.rc('xtick', labelsize='large')
@@ -30,16 +37,16 @@ plt.rc('ytick', labelsize='large')
 fig = plt.figure(figsize=(4, 3))
 ax = fig.add_subplot(1, 1, 1)
 
-df_NRMSE = pd.read_csv('dat/model_comparison.csv')
-df_NRMSE_mean = df_NRMSE.pivot(index='CRN Model',columns='Task',values='NRMSE_mean')
-df_NRMSE_stds = df_NRMSE.pivot(index='CRN Model',columns='Task',values='NRMSE_stds')
+df_NRMSE = pd.read_csv('dat/' + dat_name + '.csv')
+df_NRMSE_mean = df_NRMSE.pivot(index=xlabel,columns='Task',values='NRMSE_mean')
+df_NRMSE_stds = df_NRMSE.pivot(index=xlabel,columns='Task',values='NRMSE_stds')
 
 ax_NRMSE = df_NRMSE_mean.plot(kind='bar', yerr=df_NRMSE_stds, capsize=3, grid=True, rot=0)
 ax_NRMSE.grid(linestyle=':')
 ax_NRMSE.legend(loc='best', handlelength=2.0, framealpha=0.5, fontsize='x-large')
 # plt.title('Model Comparison')
-ax_NRMSE.set_xlabel('CRN Model', fontfamily='serif', fontsize='xx-large')
+ax_NRMSE.set_xlabel(xlabel, fontfamily='serif', fontsize='xx-large')
 ax_NRMSE.set_ylabel('NRMSE', fontsize='xx-large')
 plt.tight_layout()
-plt.savefig('plots/model_comparison_2020.png')
-plt.savefig('plots/model_comparison_2020.eps')
+plt.savefig('plots/' + plot_name + '.png')
+plt.savefig('plots/' + plot_name + '.eps')

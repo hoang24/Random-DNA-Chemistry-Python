@@ -1,0 +1,16 @@
+directive simulation {
+    initial=$initial;
+    final=$final;
+    points=$points;
+    plots=[$species_list];
+}
+directive simulator lna
+directive compilation infinite
+
+$dom_list
+
+$def_list
+
+( $initial_cond_list
+| $reaction_list
+)
