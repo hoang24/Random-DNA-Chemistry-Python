@@ -30,7 +30,11 @@ def generate_DSD(directory, chemistry, initial, final, past_result, run_index):
         past_result = None
     else:
         # Get new initial conditions (final conditions of the previous period)
-        df_dsdResult = pd.read_csv(f'visualDSD/{directory}/{past_result}.csv', engine='python')
+        try:
+            df_dsdResult = pd.read_csv(f'visualDSD/{directory}/{past_result}.csv', engine='python')
+        except PermissionError:
+            df_dsdResult = pd.read_csv(f'visualDSD/{directory}/{past_result}.csv', engine='python')
+
         dsdResult = df_dsdResult.to_dict('list')
         for key, value in dsdResult.items():
             dsdResult.update({key: [value[-1]]}) # take only the last value

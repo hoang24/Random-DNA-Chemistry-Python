@@ -1,0 +1,7 @@
+Reservoir Size,Task,NRMSE_mean,NRMSE_stds
+N = 18,Short-term Memory Task,0.000781559,0.000604732
+N = 18,Long-term Memory Task,0.170,0.005
+N = 42,Short-term Memory Task,0.000133519,9.889E-05
+N = 42,Long-term Memory Task,0.144,0.005
+N = 102,Short-term Memory Task,3.34056E-05,2.72679E-05
+N = 102,Long-term Memory Task,0.092,0.002

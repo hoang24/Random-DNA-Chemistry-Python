@@ -378,7 +378,7 @@ class RandomDSDChemistry():
         '''
         norm_dist_out = np.random.normal(loc=self.input_params['theta_out']['mean'], 
                                          scale=np.sqrt(self.input_params['theta_out']['variance']),
-                                         size=self.nO)
+                                         size=1)
         norm_dist_out = np.abs(norm_dist_out)
         self.input_params['theta_out'].update({'norm_dist_out': norm_dist_out})
         self.k_OUT = []
@@ -443,7 +443,7 @@ class RandomDSDChemistry():
 
         self.rate_OUT = {}
         for i_o, r_out in enumerate(self.R_OUT):
-            self.rate_OUT.update({r_out: [self.k_OUT[i_o]]})
+            self.rate_OUT.update({r_out: [self.k_OUT[0]]})
 
         self.rateConst_lookup = {
             'rate_BIND': self.rate_BIND,
